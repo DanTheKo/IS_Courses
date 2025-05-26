@@ -1,0 +1,57 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "IdentityService";
+
+service Authorization {
+  rpc Register (RegistrationRequest) returns (RegistrationResponse);
+  rpc Authenticate (AuthenticationRequest) returns (AuthenticationResponse);
+  rpc ValidateToken (TokenValidationRequest) returns (TokenValidationResponse);
+  rpc GetUserInfo (UserInfoRequest) returns (UserInfoResponse);
+}
+
+message RegistrationRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
+  string phone = 4;
+}
+
+message RegistrationResponse {
+  bool success = 1;
+  string user_id = 2;
+  repeated string errors = 3;
+}
+
+message AuthenticationRequest {
+  string login = 1; // Можно использовать email или username
+  string password = 2;
+}
+
+message AuthenticationResponse {
+  bool success = 1;
+  string token = 2;
+  string user_id = 3;
+  string role = 4;
+  string error = 5;
+}
+
+message TokenValidationRequest {
+  string token = 1;
+}
+
+message TokenValidationResponse {
+  bool is_valid = 1;
+  string user_id = 2;
+  string role = 3;
+}
+
+message UserInfoRequest {
+  string user_id = 1;
+}
+
+message UserInfoResponse {
+  string username = 1;
+  string email = 2;
+  string phone = 3;
+  string role = 4;
+}

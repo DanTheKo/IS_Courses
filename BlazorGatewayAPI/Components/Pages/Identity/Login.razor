@@ -1,0 +1,80 @@
+﻿@page "/login"
+@using BlazorGatewayAPI.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Server
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject AuthorizationServiceClient AuthClient
+@inject AuthService AuthService
+
+<h3>Login</h3>
+
+<EditForm Model="Input" OnValidSubmit="@HandleLogin" FormName="loginForm">
+    <DataAnnotationsValidator />
+    @* <ValidationSummary /> *@
+
+    <div class="form-group">
+        <label>Email</label>
+        <InputText @bind-Value="Input.Email" class="form-control" />
+        <ValidationMessage For="@(() => Input.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <InputText type="password" @bind-Value="Input.Password" class="form-control" />
+        <ValidationMessage For="@(() => Input.Password)" />
+    </div>
+
+    <div class="form-check">
+        <InputCheckbox @bind-Value="Input.RememberMe" class="form-check-input" />
+        <label class="form-check-label">Remember me</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Login</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger mt-3">@ErrorMessage</div>
+}
+
+@code {
+    private string? ErrorMessage { get; set; }
+
+    [SupplyParameterFromForm]
+    public InputModel Input { get; set; } = new InputModel();
+
+
+    public class InputModel
+    {
+        [Required(ErrorMessage = "Username or email required")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Password required")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Display(Name = "Remember me")]
+        public bool RememberMe { get; set; }
+    }
+
+    private async Task HandleLogin()
+    {
+        Console.WriteLine(Input.Email + " // " + Input.Password);
+        
+        var response = await AuthClient.AuthenticateAsync(Input.Email, Input.Password);
+        Console.WriteLine(response.Success);
+        if (response.Success)
+        {
+            await AuthService.LoginAsync(Input.Email, "User");
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            ErrorMessage = "Incorrect login or password";
+        }
+    }
+}

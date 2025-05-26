@@ -1,0 +1,243 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.course-main {
+    display: flex;
+}
+
+.module-sidebar {
+    width: 250px;
+    border-right: 1px solid #ddd;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.content-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.module-item {
+    display: block;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    color: #333;
+    text-decoration: none;
+}
+
+.module-list {
+    display:flex;
+    flex-direction:column;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.course-list {
+    display: flex;
+    flex-direction: column;
+
+}
+.module-item:hover, .module-item.active {
+    background-color: #f0f0f0;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.content-toolbar {
+    flex-direction: column;
+    /*    bottom: 100px;*/
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.content-item {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 0px solid #eee;
+}
+
+.borderless-input .form-control {
+    border: 0;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    background-color: transparent;
+}
+
+.borderless-input {
+    font-size: 30px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.large {
+    font-size: 30px;
+}
+
+.medium {
+    font-size: 20px;
+}
+
+.borderless-input:hover {
+    box-shadow: -5px 0 0 0 #007bff;
+}
+.borderless-input:focus {
+    box-shadow: -5px 0 0 0 #007bff;
+}
+
+.code-content {
+    position: relative;
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .35);
+    background: #f5f5f5;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+}
+
+    .code-content pre {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+.code-language-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0 0 0 4px;
+}
+
+.sidebar {
+    padding: 0 0;
+    background-color: white;
+    position: sticky;
+    top: 75px;
+    overflow-y: auto;
+    max-width: 250px;
+}
+
+.left-sidebar {
+    background-color: white;
+/*    border-right: 1px solid #ddd;*/
+}
+
+.main-content {
+    width: 70%;
+    padding: 20px;
+/*    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .35);*/
+    z-index:1;
+    background-color: #fff;
+}
+
+.right-sidebar {
+    background-color: white;
+    flex-direction: column;
+    /*    bottom: 100px;*/
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    border-left: 1px solid #ddd;
+}
+
+.sidebar-wrapper {
+    position: relative;
+    min-width: 100px;
+    max-width: 200px;
+    font-size: small;
+    height:auto;
+}
+.center-container{
+    display:flex;
+    justify-content: center;
+}
+
+.center-container-column {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.full-width{
+    max-width: 100%;
+    min-width: 10%;
+    max-height: 55vh;
+    margin: 10px;
+}
+
+.video-background {
+    position: absolute  ;
+    width: 100%;
+    height: 100vh; /* На всю высоту экрана */
+    top:0;
+    left:0;
+    overflow: hidden;
+}
+
+    .video-background video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translate(-50%, -50%);
+        z-index: -1; /* Видео под контентом */
+    }
+header {
+    background: #e3e5ff;
+    background: radial-gradient(circle,rgba(227, 229, 255, 1) 0%, rgba(255, 230, 235, 1) 100%);
+}
+footer {
+
+}
+
+::-webkit-scrollbar {
+    width: 13px;
+    height: 13px;
+}
+
+::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e3e5ff;
+    border-radius: 0;
+    border: 3px solid #ffffff;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #e3e5ff;
+    }

@@ -1,0 +1,260 @@
+﻿
+@page "{id}/{idItem?}"
+@model GatewayAPI.Pages.Courses.EditorModel
+@{
+    ViewData["Title"] = $"{Model.CurrentCourse.Title}";
+    var currentCourseItemValues = new Dictionary<string, string> {
+                    { "id", Model.CurrentCourse.Id },
+                    { "order", (Model.CourseItems.Count + 1).ToString() }
+    };
+}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <link rel="stylesheet" href="~/node_modules/easymde/dist/easymde.min.css">
+    <link rel="stylesheet" href="~/css/easymde.css">
+
+
+</head>
+@* Надо сделать стили для blockquote *@
+@section Scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
+
+            const element = document.getElementById("easymde");
+            const editor = new EasyMDE(element);
+            if (content) {
+                editor.value(content);
+            }
+
+            document.getElementById('saveAllBtn').addEventListener('click', async function () {
+                const courseItemId = document.getElementById('courseItemId').value;
+                const courseItemTitle = document.getElementById('courseItemTitle').value;
+                const courseItemType = document.getElementById('courseItemType').value;
+
+                const contentId = document.getElementById('mainContentId').value;
+                const contentType = "Base";
+                const contentData = editor.value();
+
+                const content = {
+                    Id: contentId,
+                    Type: contentType,
+                    Data: contentData,
+                    Order: 0,
+                    CourseItemId: courseItemId
+                };
+                const courseItem = {
+                    Id: courseItemId,
+                    Title: courseItemTitle,
+                    Type: courseItemType
+                }
+
+                const data = {
+                    Content: content,
+                    CourseItem: courseItem
+                };
+
+                const response = await fetch('?handler=SaveData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(data)
+                });
+
+            });
+
+        });
+
+    </script>
+
+    <script type="text/javascript" src="/js/view.js"></script>
+
+
+}
+
+<div class="course-main">
+    <!-- Левая панель с модулями -->
+
+    <div class="sidebar-wrapper">
+        <div class="sidebar left-sidebar">
+            <div class="text-center medium">Модули курса</div>
+            <div>
+                <div class="module-list">
+                    @foreach (var module in Model.CourseItems)
+                    {
+                        <a href="/courses/preview/@Model.CurrentCourse.Id/@module.Id"
+                           class="module-item">
+                            @module.Title
+                        </a>
+                    }
+                    <button id="addModuleBtn" class="btn btn-sm btn-outline-primary">+ Добавить модуль</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Основная область контента -->
+    <div class="main-content" >
+
+        @if (Model.CurrentCourseItem != null)
+        {
+            @*             <h2>@Model.CurrentCourseItem.Title</h2>
+            <h4>@Model.CurrentCourseItem.Type</h4> *@
+
+            <form method="post"
+            asp-all-route-data="currentCourseItemValues">
+                <input hidden id="courseItemId" value="@Model.CurrentCourseItem.Id" />
+                <input hidden id="mainContentId" value="@Model.Contents.First().Id" />
+                <div class="form-group">
+                    <input id="courseItemTitle" asp-for="CurrentCourseItem.Title" class="borderless-input large form-control" placeholder="Название модуля" />
+                </div>
+                <div class="form-group">
+                    <input id="courseItemType" asp-for="CurrentCourseItem.Type" list="itemsList" class="borderless-input medium form-control" placeholder="Тип модуля" />
+                    <datalist id="itemsList">
+                        <option value="Lecture">Lecture</option>
+                        <option value="Practice">Practice</option>
+                        <option value="Test">Test</option>
+                    </datalist>
+                </div>
+
+            </form>
+            <textarea id="easymde"></textarea>
+
+
+
+
+            <div id="@Model.CurrentCourseItem.Id" class="content-container">
+                @if (false)
+                {
+                    @foreach (var content in Model.Contents)
+                    {
+                        <div class="content-item" id="@content.Id">
+
+                            @if (content.Type == "Text")
+                            {
+                                <div class="text-content">@content.Data</div>
+                            }
+                            else if (content.Type == "Image")
+                            {
+                                <img data-src="@content.Data" class="img-fluid">
+                            }
+                            else if (content.Type == "Video")
+                            {
+                                <iframe width="560"
+                                        height="315"
+                                        src="http://www.youtube.com/embed/fxCEcPxUbYA"
+                                        frameborder="0"
+                                        allowfullscreen></iframe>
+                            }
+                            else if (content.Type == "Code")
+                            {
+                                <div class="code-content">
+                                    <pre><code class="language-code">@content.Data</code></pre>
+                                    <div class="code-language-badge">code</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-content">@content.Data</div>
+                            }
+                            <button class="btn btn-sm btn-outline-danger" onclick="this.closest('div').remove()">
+                                Удалить
+                            </button>
+                            <!-- Другие типы контента -->
+                        </div>
+                    }
+                }
+                
+            </div>
+
+            <!-- Toolbar для добавления контента -->
+
+        }
+        else
+        {
+            <div class="large">Пока что тут пусто. Создайте новый модуль!</div>
+        }
+    </div>
+    <div class="sidebar-wrapper">
+        <div class="sidebar right-sidebar">
+            <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">Текст
+            </button>
+            <button class="btn btn-sm btn-outline-primary add-content" data-type="Image">
+                Изображение
+            </button>
+            <button class="btn btn-sm btn-outline-primary add-content" data-type="Video">
+                Видео
+            </button>
+            <button class="btn btn-sm btn-outline-primary add-content" data-type="Code">Код
+            </button>
+            <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно создания модуля -->
+<div class="modal fade" id="moduleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Новый модуль</h5>
+            </div>
+
+            <form id="moduleForm" method="post"
+            asp-all-route-data="currentCourseItemValues"
+            asp-page-handler="CreateCourseItem">
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Название модуля</label>
+                        <input asp-for="CurrentCourseItem.Title" id="title"class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Тип модуля</label>
+                        <select asp-for="@Model.CurrentCourseItem.Type" class="form-control">
+                            <option value="Lecture">Lecture</option>
+                            <option value="Practice">Practice</option>
+                            <option value="Test">Test</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button class="btn btn-primary" data-bs-dismiss="modal">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно создания контента -->
+<div class="modal fade" id="contentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить контент</h5>
+            </div>
+            <form id="contentForm" method="post" >
+                <div class="modal-body">
+                    <input type="hidden" name="Type" id="contentType">
+                    <div class="form-group">
+                        <label id="contentLabel">Текст</label>
+                        <textarea name="Data" class="form-control" id="contentData" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button id="create-content" class="btn btn-primary" data-bs-dismiss="modal">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+

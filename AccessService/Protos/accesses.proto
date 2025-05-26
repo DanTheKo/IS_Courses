@@ -1,0 +1,28 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AccessService";
+
+
+service Accesses {
+  rpc CreateAccess (GetByIdsRequest) returns (AccessResponce);
+  rpc GetAccess (GetByIdsRequest) returns (AccessResponce);
+  rpc DeleteAccess (GetByIdsRequest) returns (Empty);
+
+}
+
+message GetByIdsRequest {
+  string identity_id = 1;
+  string item_id = 2;
+}
+
+message AccessResponce {
+  string id = 1;
+  string identity_id = 2;
+  string item_id = 3;
+  string access_type = 4;
+}
+
+message Empty {
+}
+
+

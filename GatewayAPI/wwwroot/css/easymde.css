@@ -1,0 +1,12 @@
+﻿.editor-preview{
+    padding:10px;
+    background: white;
+}
+
+.editor-preview pre {
+    position: relative;
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .35);
+    background: #f5f5f5;
+    padding: 1rem;
+    font-family: 'Courier New', monospace;
+}

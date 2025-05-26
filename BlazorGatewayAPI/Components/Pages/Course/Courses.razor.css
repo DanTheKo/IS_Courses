@@ -1,0 +1,48 @@
+﻿body {
+
+}
+.course-editor {
+    display: flex;
+    height: calc(100vh - 120px);
+}
+
+.module-sidebar {
+    width: 250px;
+    border-right: 1px solid #ddd;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.content-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.module-item {
+    display: block;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+}
+
+    .module-item:hover, .module-item.active {
+        background-color: #f0f0f0;
+    }
+
+.content-toolbar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.content-item {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}

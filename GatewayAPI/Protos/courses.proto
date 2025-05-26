@@ -1,0 +1,106 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "GatewayAPI.Grpc";
+
+service Courses {
+  // Курсы
+  rpc CreateCourse (CourseRequest) returns (Course);
+  rpc GetCourse (GetByIdRequest) returns (Course);
+  rpc GetCourses (PaginationRequest) returns (PaginatedResponseCourse);
+  rpc UpdateCourse (CourseRequest) returns (Course);
+  rpc DeleteCourse (GetByIdRequest) returns (Empty);
+
+  // Объекты 
+  rpc CreateCourseItem (CourseItemRequest) returns (CourseItem);
+  rpc GetCourseItem (GetByIdRequest) returns (CourseItem);
+  rpc UpdateCourseItem (CourseItemRequest) returns (CourseItem);
+  rpc DeleteCourseItem (GetByIdRequest) returns (Empty);
+
+  // Контент
+  rpc CreateContent (ContentRequest) returns (Content);
+  rpc CreateContents (ContentsRequest) returns (Empty);
+  rpc GetContent(GetByIdRequest) returns (Content);
+  rpc UpdateContent (ContentRequest) returns (Content);
+  rpc DeleteContent (GetByIdRequest) returns (Empty);
+
+}
+
+
+message Course {
+    string id = 1; 
+    string title = 2;
+    string description = 3;
+    repeated string course_items_ids = 4;
+}
+message Content {
+    string id = 1;
+    string type = 2;
+    string data = 3;
+    int32 order = 4;
+    string course_item_id = 5;
+}
+message CourseMetadata {
+    string id = 1;
+    bool is_deleted = 2;
+    string preview_image_url = 3;
+    string duration = 4;
+}
+message CourseItem {
+    string id = 1;
+    string course_id = 2;
+    optional string parent_id = 3;
+    string title = 4;
+    string type = 5;
+    repeated string children_ids = 6;
+    repeated string contents_ids = 7;
+    int32 order = 8;
+
+}
+message Empty {}
+
+message GetByIdRequest {
+  string id = 1;
+}
+message CourseRequest {
+  string id = 1; //Если есть
+  string title = 2;
+  string description = 3;
+  CourseMetadataRequest course_metadata = 4;
+}
+message CourseMetadataRequest {
+    bool is_deleted = 1;
+    string image = 2;
+    string duration = 3;
+}
+message CourseItemRequest {
+  string id = 1; //Если есть
+  string course_id = 2;
+  string parent_id = 3;
+  string type = 4;
+  string title = 5;
+  int32 order = 6;
+  repeated string contents_ids = 7;
+}
+message ContentRequest {
+  string id = 1; //Если есть
+  string course_item_id = 2;
+  string type = 3;
+  string data = 4;
+  int32 order = 5;
+}
+
+message ContentsRequest {
+  repeated ContentRequest content_requests = 1;
+}
+
+message PaginationRequest {
+  int32 page_number = 1;
+  int32 page_size = 2;
+}
+
+message PaginatedResponseCourse {
+  repeated Course items = 1;
+  int32 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+}

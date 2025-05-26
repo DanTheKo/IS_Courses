@@ -1,0 +1,130 @@
+﻿@page "/courses"
+@using BlazorGatewayAPI.Services
+@inject CourseServiceClient CourseService;
+
+<h3>Courses</h3>
+
+@code {
+    Course CurrentCourse { get; set; }
+
+}
+
+<div class="course-editor">
+    <!-- Левая панель с модулями -->
+    <div class="module-sidebar">
+        <h4>Модули курса</h4>
+        <div class="module-list">
+            @foreach (var module in new string[] { "Йоу", "Йоу" })
+            {
+                <a href="/courses//modules/@module" 
+                class="module-item @(module == "" ? "active" : "active")">
+                    @module
+                </a>
+            }
+        </div>
+        <button id="addModuleBtn" class="btn btn-primary mt-2">+ Добавить модуль</button>
+    </div>
+
+    <!-- Основная область контента -->
+    <div class="content-area">
+        @if (true)
+        {
+            <div class="content-container">
+                @foreach (var content in new string[] { "Йоу", "Йоу" })
+                {
+                    <div class="content-item" id="@content">
+                        @if (content == "Text")
+                        {
+                            <div class="text-content">@content</div>
+                        }
+                        else if (content == "Image")
+                        {
+                            <img src="@content" class="img-fluid">
+                        }
+                        else if (content == "Video")
+                        {
+                            <iframe width="560"
+                                    height="315"
+                                    src="http://www.youtube.com/embed/fxCEcPxUbYA"
+                                    frameborder="0"
+                                    allowfullscreen></iframe>
+                        }
+                        else
+                        {
+                            <div class="text-content">@content</div>
+                        }
+                        <!-- Другие типы контента -->
+                    </div> 
+                }
+            </div>
+
+            <!-- Toolbar для добавления контента -->
+            <div class="content-toolbar">
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">
+                    <i class="fas fa-font"></i> Текст
+                </button>
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Image">
+                    <i class="fas fa-image"></i> Изображение
+                </button>
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Video">
+                    <i class="fas fa-video"></i> Видео
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Модальное окно создания модуля -->
+<div class="modal fade" id="moduleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Новый модуль</h5>
+            </div>
+            <form id="moduleForm" method="post" >
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Название модуля</label>
+                        <input name="Title" class="form-control" required>
+                    </div>
+                     <div class="form-group">
+                        <select class="form-control">
+                            <option value="Lecture">Lecture</option>
+                            <option value="Practice">Practice</option>
+                            <option value="Test">Test</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно создания контента -->
+<div class="modal fade" id="contentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить контент</h5>
+            </div>
+            <form id="contentForm" method="post" 
+            >
+                <div class="modal-body">
+                    <input type="hidden" name="Type" id="contentType">
+                    <div class="form-group">
+                        <label id="contentLabel">Текст</label>
+                        <textarea name="Data" class="form-control" id="contentData" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
