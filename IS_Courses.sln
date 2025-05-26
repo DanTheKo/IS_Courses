@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService", "AuthorizationService\IdentityService.csproj", "{E4488548-BCCB-42ED-9A8E-3F79ADEF6452}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService", "IdentityService\IdentityService.csproj", "{E4488548-BCCB-42ED-9A8E-3F79ADEF6452}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayAPI", "GatewayAPI\GatewayAPI.csproj", "{33B0444D-F8C7-4B5B-9C56-D2177554D65D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseService", "CoursesService\CourseService.csproj", "{3C9028AF-B11D-4EB7-B818-70DA8B222B18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseService", "CourseService\CourseService.csproj", "{3C9028AF-B11D-4EB7-B818-70DA8B222B18}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessService", "AccessService\AccessService.csproj", "{9B1D7239-32EE-41F6-8F2A-8CEBE96E6483}"
 EndProject
