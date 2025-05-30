@@ -14,13 +14,13 @@ namespace GatewayAPI.Pages.Courses
         [BindProperty(SupportsGet = true)]
         public string Id { get; set; }
 
-        private readonly ILogger<CourseCreateModel> _logger;
+        private readonly ILogger<CourseUpdateModel> _logger;
         public CourseServiceClient _courseClient;
 
         [BindProperty(SupportsGet = true)]
         public Course Course { get; set; }
 
-        public CourseUpdateModel(ILogger<CourseCreateModel> logger, CourseServiceClient courseClient)
+        public CourseUpdateModel(ILogger<CourseUpdateModel> logger, CourseServiceClient courseClient)
         {
             _logger = logger;
             _courseClient = courseClient;

@@ -12,7 +12,9 @@ namespace AccessService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<Access>()
+                .HasIndex(a => new { a.IdentityId, a.ResourceId })
+                .IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

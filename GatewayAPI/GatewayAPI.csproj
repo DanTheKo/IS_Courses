@@ -30,10 +30,12 @@
 		</ItemGroup>
 	
 		<ItemGroup>
+		  <Protobuf Update="Protos\accesses.proto" GrpcServices="Both" />
 		  <Protobuf Update="Protos\courses.proto" GrpcServices="Both" />
 		</ItemGroup>
 	
 		<ItemGroup>
+		  <Folder Include="Controllers\" />
 		  <Folder Include="Models\" />
 		  <Folder Include="Components\" />
 		</ItemGroup>

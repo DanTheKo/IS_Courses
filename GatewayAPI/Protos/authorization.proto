@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "GatewayAPI";
+option csharp_namespace = "GatewayAPI.Grpc";
 
 service Authorization {
   rpc Register (RegistrationRequest) returns (RegistrationResponse);

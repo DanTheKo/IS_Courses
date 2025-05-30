@@ -7,10 +7,10 @@ namespace GatewayAPI.Pages.Courses
 {
     public class CoursesModel : PageModel
     {
-        private readonly ILogger<EditorModel> _logger;
+        private readonly ILogger<CoursesModel> _logger;
         public CourseServiceClient _courseClient;
 
-        public CoursesModel(ILogger<EditorModel> logger, CourseServiceClient courseClient)
+        public CoursesModel(ILogger<CoursesModel> logger, CourseServiceClient courseClient)
         {
             _logger = logger;
             _courseClient = courseClient;

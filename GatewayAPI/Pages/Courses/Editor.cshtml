@@ -26,11 +26,22 @@
         document.addEventListener("DOMContentLoaded", function() {
             const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
 
+
             const element = document.getElementById("easymde");
-            const editor = new EasyMDE(element);
+
+            const editor = new EasyMDE({
+                element: element,
+                spellChecker: false
+            });
+            //const editor = new EasyMDE(element);
             if (content) {
                 editor.value(content);
             }
+
+            const toolbar = document.querySelector('.editor-toolbar');
+            const newParent = document.querySelector('.sidebar.right-sidebar');
+            const referenceElement = document.getElementById('saveAllBtn');
+            newParent.insertBefore(toolbar, referenceElement);
 
             document.getElementById('saveAllBtn').addEventListener('click', async function () {
                 const courseItemId = document.getElementById('courseItemId').value;
@@ -89,7 +100,7 @@
                 <div class="module-list">
                     @foreach (var module in Model.CourseItems)
                     {
-                        <a href="/courses/preview/@Model.CurrentCourse.Id/@module.Id"
+                        <a href="/courses/editor/@Model.CurrentCourse.Id/@module.Id"
                            class="module-item">
                             @module.Title
                         </a>
@@ -183,7 +194,7 @@
     </div>
     <div class="sidebar-wrapper">
         <div class="sidebar right-sidebar">
-            <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">Текст
+@*             <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">Текст
             </button>
             <button class="btn btn-sm btn-outline-primary add-content" data-type="Image">
                 Изображение
@@ -192,7 +203,7 @@
                 Видео
             </button>
             <button class="btn btn-sm btn-outline-primary add-content" data-type="Code">Код
-            </button>
+            </button> *@
             <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить</button>
         </div>
     </div>

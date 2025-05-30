@@ -1,3 +1,4 @@
+using GatewayAPI.PageFilters;
 using GatewayAPI.Services;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -6,11 +7,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GatewayAPI.Pages.Identity
 {
+    [RedirectAuthenticatedUsers]
     public class RegisterModel : PageModel
     {
         private readonly AuthorizationServiceClient _authClient;
-        private readonly ILogger<LoginModel> _logger;
-        public RegisterModel(ILogger<LoginModel> logger, AuthorizationServiceClient authClient)
+        private readonly ILogger<RegisterModel> _logger;
+        public RegisterModel(ILogger<RegisterModel> logger, AuthorizationServiceClient authClient)
         {
             _logger = logger;
             _authClient = authClient;

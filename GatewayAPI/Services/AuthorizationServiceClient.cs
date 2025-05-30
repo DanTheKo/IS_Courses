@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;  
 using Google.Protobuf;
+using GatewayAPI.Grpc;
 
 namespace GatewayAPI.Services
 {

@@ -3,10 +3,16 @@
     background: white;
 }
 
-.editor-preview pre {
-    position: relative;
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .35);
-    background: #f5f5f5;
-    padding: 1rem;
-    font-family: 'Courier New', monospace;
-}
+    .editor-preview pre {
+        position: relative;
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .35);
+        background: #f5f5f5;
+        padding: 1rem;
+        font-family: 'Courier New', monospace;
+    }
+
+    .editor-preview blockquote {
+        border-left: 6px solid #ddd;
+        padding-left: 10px;
+        color: #777;
+    }

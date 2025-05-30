@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "AccessService.Grpc";
+option csharp_namespace = "GatewayAPI.Grpc";
 
 
 service Accesses {
@@ -31,6 +31,5 @@ message AccessResponce {
 
 message EmptyAccessResponce {
 }
-
 
 

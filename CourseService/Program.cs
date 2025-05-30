@@ -1,5 +1,4 @@
 using CourseService.Services;
-using static CSharpFunctionalExtensions.Result;
 using System;
 using CourseService.Data;
 using Microsoft.EntityFrameworkCore;

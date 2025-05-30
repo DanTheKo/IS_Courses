@@ -9,9 +9,6 @@ namespace CourseService.Data
         public DbSet<CourseItem> CourseItems { get; set; }
         public DbSet<Content> Contents { get; set; }
 
-/*        public static CourseDbContext Instance => _dbContext ??= new CourseDbContext();
-        private static CourseDbContext? _dbContext;*/
-
         public CourseDbContext(DbContextOptions<CourseDbContext> options) : base(options) { }
         public CourseDbContext() { }
 

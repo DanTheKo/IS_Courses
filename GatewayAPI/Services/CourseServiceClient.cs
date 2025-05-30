@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using GatewayAPI.Grpc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GatewayAPI.Services
 {

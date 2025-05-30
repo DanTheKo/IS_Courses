@@ -5,9 +5,17 @@ namespace AccessService.Models
     public class Access : Entity<Guid>
     {
         public Guid IdentityId { get; set; }
-        public Guid ItemId { get; set;}
-        public string AccessType { get; set; }
+        public Guid ResourceId { get; set;}
+        public string AccessData { get; set; } 
 
+        public Access(Guid id)
+        {
+            Id = id;
+        }
 
+        public Access()
+        {
+            AccessData = "NoAccess";
+        }
     }
 }

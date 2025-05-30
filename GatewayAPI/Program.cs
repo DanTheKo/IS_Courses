@@ -31,7 +31,11 @@ namespace GatewayAPI
                 var serviceUrl = "http://localhost:5057";
                 return new CourseServiceClient(serviceUrl);
             });
-            builder.Services.AddServerSideBlazor();
+            builder.Services.AddSingleton<AccessServiceClient>(provider =>
+            {
+                var serviceUrl = "http://localhost:5122";
+                return new AccessServiceClient(serviceUrl);
+            });
 
             var app = builder.Build();
 
