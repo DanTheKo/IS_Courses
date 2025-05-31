@@ -1,4 +1,5 @@
 using GatewayAPI.Grpc;
+using GatewayAPI.PageFilters;
 using GatewayAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace GatewayAPI.Pages.Courses
 {
     [Authorize]
+    [RedirectByAccess("id", "/index")]
     public class EditorModel : PageModel
     {
         private readonly ILogger<EditorModel> _logger;
@@ -25,13 +27,11 @@ namespace GatewayAPI.Pages.Courses
         [BindProperty]
         public CourseItem CurrentCourseItem { get; set; }
         [BindProperty]
+        public CourseItem NewCourseItem { get; set; } = new CourseItem();
+        [BindProperty]
         public List<Content> Contents { get; set; } = new List<Content>();
         [BindProperty]
-        public List<Content> NewContents { get; set; } = new List<Content>();
-        [BindProperty]
         public List<CourseItem> CourseItems { get; set; } = new List<CourseItem>();
-
-
 
         //Брокер сообщений RabbitMQ, логирование Garfana?, Jaeger, тесты Unit test 
         //Какой-то ElasticSearch
@@ -105,7 +105,7 @@ namespace GatewayAPI.Pages.Courses
 
         public async Task<IActionResult> OnPostCreateCourseItemAsync(string id, int order)
         {
-            CourseItem newItem = await _courseClient.CreateCourseItemAsync(id, "", "" + CurrentCourseItem.Type, "" +CurrentCourseItem.Title, order);
+            CourseItem newItem = await _courseClient.CreateCourseItemAsync(id, string.Empty, string.Empty + NewCourseItem.Type, string.Empty + NewCourseItem.Title, order);
            
             List<Content> contents = new List<Content>();
             Content content = new Content();
@@ -117,6 +117,17 @@ namespace GatewayAPI.Pages.Courses
             await _courseClient.CreateContentsAsync(contents);
 
             return Redirect($"/courses/editor/{id}/{newItem.Id}");
+        }
+
+        public class Entity
+        {
+            public string Id { get; set; }
+        }
+        public async Task<IActionResult> OnPostDeleteCourseItemAsync([FromBody] Entity entity)
+        {
+            await _courseClient.DeleteCourseItemAsync(entity.Id);
+
+            return new OkResult();
         }
 
         public async Task<IActionResult> OnPostCreateContentsAsync([FromBody]List<Content> contents)

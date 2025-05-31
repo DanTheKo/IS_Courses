@@ -27,6 +27,7 @@ message AccessResponce {
   string identity_id = 2;
   string resource_id = 3;
   string access_data = 4;
+  bool has_access = 5;
 }
 
 message EmptyAccessResponce {

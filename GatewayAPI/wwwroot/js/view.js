@@ -6,172 +6,139 @@ document.getElementById('addModuleBtn').addEventListener('click', function () {
     modal.show();
 });
 
-// Обработка кнопок добавления контента
-document.querySelectorAll('.add-content').forEach(btn => {
-    btn.addEventListener('click', function () {
-        const type = this.dataset.type;
-        const modal = new bootstrap.Modal(document.getElementById('contentModal'));
-        const label = document.getElementById('contentLabel');
-        const dataField = document.getElementById('contentData');
-
-        document.getElementById('contentType').value = type;
-
-        switch (type) {
-            case 'Text':
-                label.textContent = 'Текст';
-                dataField.placeholder = 'Введите текст...';
-                break;
-            case 'Image':
-                label.textContent = 'URL изображения';
-                dataField.placeholder = 'https://example.com/image.jpg';
-                break;
-            case 'Video':
-                label.textContent = 'Код видео';
-                dataField.placeholder = '<iframe...>';
-                break;
-            case 'Code':
-                label.textContent = '';
-                dataField.placeholder = '';
-                break;
-        }
-
-        modal.show();
-    });
-});
-
-function formatTextWithParagraphs(text) {
-    // Обработка пустых строк между абзацами
-    return text
-        .split(/\n\s*\n/) // Разделение на абзацы по пустым строкам
-        .map(paragraph => {
-            if (!paragraph.trim()) return '';
-            // Заменяем одиночные переносы внутри абзаца на <br>
-            return `<p>${paragraph.replace(/\n/g, '<br>')}</p>`;
-        })
-        .join('');
-}
-function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// Получаем данные из C# и применяем форматирование
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll('.text-content').forEach(content => {
-        const contentData = content.innerHTML;
-        const formattedText = formatTextWithParagraphs(contentData);
-        content.innerHTML = formattedText;
-    })
-/*    document.querySelectorAll('.language-code').forEach(content => {
-        const contentData = content.innerHTML;
-        const formattedText = escapeHtml(contentData);
-        content.innerHTML = formattedText;
-    })*/
-
-});
-
-const newContents = [];
-courseItemId = document.querySelector('.content-container').id;
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Обработчик клика на кнопку "Добавить"
-    document.querySelectorAll('#create-content').forEach(btn => {
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            // Получаем данные из формы
-            const contentType = document.getElementById('contentType').value;
-            const contentData = document.getElementById('contentData').value;
 
-            // Создаем новый элемент контента
-            const contentItem = document.createElement('div');
-            contentItem.className = 'content-item';
-            contentItem.id = 'content-' + Date.now();
-            
-
-            newContents.push({
-                Type: contentType,
-                Data: contentData,
-                Order: 0,
-                CourseItemId: courseItemId
-            })
-            // В зависимости от типа контента создаем разный HTML
-            if (contentType === 'Text') {
-
-                contentItem.innerHTML = `
-                <div class="text-content">${formatTextWithParagraphs(contentData)}</div>
-            `;
-            } else if (contentType === 'Image') {
-                contentItem.innerHTML = `
-                <img data-src="${contentData}" class="img-fluid">
-            `;
-            } else if (contentType === 'Video') {
-                contentItem.innerHTML = `
-                <iframe width="560" height="315" 
-                    src="https://www.youtube.com/embed/" 
-                    frameborder="0" allowfullscreen></iframe>
-            `;
-            } else if (contentType === 'Code') {
-                const language = "code";
-                contentItem.innerHTML = `
-                    <div class="code-content">
-                        <pre><code class="language-${language}">${escapeHtml(contentData)}</code></pre>
-                        <div class="code-language-badge">${language}</div>
-                    </div>`;
-            }else {
-                contentItem.innerHTML = `
-                <div class="text-content">${contentData}</div>
-            `;
-            }
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn btn-sm btn-outline-danger ';
-            deleteBtn.textContent = 'Удалить';
-            deleteBtn.onclick = function () {
-                contentItem.remove();
-            };
-
-            contentItem.appendChild(deleteBtn);
-
-            // Добавляем новый элемент в контейнер
-            document.querySelector('.content-container').appendChild(contentItem);
-
-            // Очищаем форму
-            document.getElementById('contentData').value = '';
-
-            if (contentType === 'Code') {
-                hljs.highlightElement(contentItem.querySelector('code'));
-            }
-        })
-    })
-
+    courseItemActionsMenu();
 });
 
+function courseItemActionsMenu() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .module-actions-menu {
+            position: fixed;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            min-width: 120px;
+        }
+        .module-actions-menu button {
+            padding: 8px 12px;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: small;
+        }
+        .module-actions-menu button:hover {
+            background-color: #f5f5f5;
+        }
+        .module-menu-btn {
+            position: relative;
+            cursor: pointer;
+        }
+        .module-menu-btn.active {
+            background-color: #f0f0f0;
+        }
+    `;
+    document.head.appendChild(style);
+
+    const actionsMenu = document.createElement('div');
+    actionsMenu.className = 'module-actions-menu';
+
+    const hideButton = document.createElement('button');
+    hideButton.textContent = 'Скрыть';
+    hideButton.addEventListener('click', function () {
+        const id = actionsMenu.currentModule.id;
+        console.log('Скрыть модуль с ID:', id);
+        hideCourseItem(id);
+        hideActionsMenu();
+    });
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Удалить';
+    deleteButton.addEventListener('click', function () {
+        const id = actionsMenu.currentModule.id;
+        console.log('Удалить модуль с ID:', id);
+        if (confirm('Вы уверены, что хотите удалить этот модуль?')) {
+            deleteCourseItem(id);
+        }
+        hideActionsMenu();
+    });
 
 
-function deleteItem(id) {
-    fetch(`/DeleteItem?id=${id}`, { method: 'POST' })
-        .then(response => {
-            if (response.ok) {
-                document.getElementById(`item-${id}`).remove();
+
+    actionsMenu.appendChild(hideButton);
+    actionsMenu.appendChild(deleteButton);
+    document.body.appendChild(actionsMenu);
+
+    const moduleItems = document.querySelectorAll('.module-menu-btn');
+    let currentActiveItem = null;
+
+    moduleItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            if (e.button === 0 && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                showActionsMenu(item);
             }
         });
+    });
+    function showActionsMenu(item) {
+        if (currentActiveItem) {
+            currentActiveItem.classList.remove('active');
+        }
+
+        const rect = item.getBoundingClientRect();
+        actionsMenu.style.display = 'flex';
+        actionsMenu.style.top = `${rect.top}px`;
+        actionsMenu.style.left = `${rect.right + 5}px`;
+
+        item.classList.add('active');
+        currentActiveItem = item;
+
+        actionsMenu.currentModule = item;
+    }
+    function hideActionsMenu() {
+        actionsMenu.style.display = 'none';
+        if (currentActiveItem) {
+            currentActiveItem.classList.remove('active');
+            currentActiveItem = null;
+        }
+    }
+    document.addEventListener('click', function (e) {
+        if (!actionsMenu.contains(e.target) && !e.target.classList.contains('module-menu-btn')) {
+            hideActionsMenu();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            hideActionsMenu();
+        }
+    });
 }
 
-/*document.getElementById('old').addEventListener('click', async function () {
+function hideCourseItem(id) {
+    console.log('Скрываем модуль ID:', id);
+}
 
-    const response = await fetch('?handler=CreateContents', {
+function deleteCourseItem(id) {
+    console.log('Удаляем модуль ID:', id);
+
+    const data = {
+        Id: id,
+    };
+    fetch(`?handler=DeleteCourseItem`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
         },
-        body: JSON.stringify(newContents)
+        body: JSON.stringify(data)
     });
+}
 
-    console.log(response.status);
-
-});*/

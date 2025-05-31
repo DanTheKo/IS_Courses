@@ -13,13 +13,23 @@ html {
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
+    scrollbar-gutter: stable;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
+::-webkit-scrollbar-track-piece:start {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track-piece:end {
+    background: transparent;
+}
+
 
 .course-main {
     display: flex;
@@ -41,9 +51,16 @@ body {
 .module-item {
     display: block;
     padding: 8px 12px;
-    margin-bottom: 5px;
     color: #333;
     text-decoration: none;
+    flex-grow: 1;
+}
+
+.module-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
 }
 
 .module-list {
@@ -51,6 +68,7 @@ body {
     flex-direction:column;
     max-height: 50vh;
     overflow-y: auto;
+    
 }
 
 .course-list {
@@ -147,8 +165,10 @@ header {
 }
 
 .left-sidebar {
+    display: flex;
     background-color: white;
     border-right: 1px solid #ddd;
+    flex-direction: column;
 }
 
 .main-content {
@@ -166,6 +186,7 @@ header {
     right: 20px;
     display: flex;
     gap: 10px;
+    z-index: 6;
 /*    border-left: 1px solid #ddd;*/
 }
 
@@ -226,6 +247,7 @@ footer {
 ::-webkit-scrollbar {
     width: 13px;
     height: 13px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-track {
@@ -236,9 +258,25 @@ footer {
 ::-webkit-scrollbar-thumb {
     background: #e3e5ff;
     border-radius: 0;
-    border: 3px solid #ffffff;
 }
 
     ::-webkit-scrollbar-thumb:hover {
         background: #e3e5ff;
     }
+
+
+
+.module-item-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 5px;
+}
+.module-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    color: #666;
+}

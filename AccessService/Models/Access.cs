@@ -11,11 +11,12 @@ namespace AccessService.Models
         public Access(Guid id)
         {
             Id = id;
+            AccessData = "Denied";
         }
 
         public Access()
         {
-            AccessData = "NoAccess";
+            AccessData = "Denied";
         }
     }
 }

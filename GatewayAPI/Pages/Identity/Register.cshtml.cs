@@ -65,7 +65,7 @@ namespace GatewayAPI.Pages.Identity
             var responce = await _authClient.RegisterAsync(Input.Login, Input.ConfirmPassword, Input.Email, Input.Phone);
             if(responce.Success != false)
             {
-                return RedirectToPage("/Login");
+                return RedirectToPage("/identity/login");
             }
             else
             {

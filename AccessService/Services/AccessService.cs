@@ -68,6 +68,7 @@ namespace AccessService.Services
             responce.IdentityId = access.IdentityId.ToString();
             responce.ResourceId = access.ResourceId.ToString();
             responce.AccessData = access.AccessData;
+            responce.HasAccess = access.AccessData != "Denied";
             return responce;
         }
     }

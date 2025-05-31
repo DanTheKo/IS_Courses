@@ -1,14 +1,32 @@
 ﻿@page "{id}"
 @model GatewayAPI.Pages.Courses.PreviewModel
 @{
+    ViewData["Title"] = $"{@Model.Course.Title}";
 }
 
 <div>
     <div class="large">@Model.Course.Title</div>
     <img src="/images/front-end-development.jpg" width="350" />
-    <div class="medium">*О курсе</div>
-    <div class="medium">@Model.Course.Description</div>
-    <form action="/courses/view/@Model.Course.Id">
-        <button class="btn btn-sm btn-outline-primary medium">Записаться на курс</button>
-    </form>
+    <div class="medium">О курсе</div>
+    <p>
+        <div class="medium">@Model.Course.Description</div>
+    </p>
+    @if (Model.Access)
+    {
+        <form action="/courses/view/@Model.Course.Id">
+            <button class="btn btn-sm btn-outline-primary medium">Просмотр курса</button>
+        </form>
+        <form action="/courses/editor/@Model.Course.Id">
+            <button class="btn btn-sm btn-outline-success medium">Редактирование курса</button>
+        </form>
+    }
+    else
+    {
+        <form id="getAccessForm" method="post"
+              asp-page-handler="GetAccess">
+            <button class="btn btn-sm btn-outline-primary medium">Записаться на курс</button>
+        </form>
+    }
+
+
 </div>

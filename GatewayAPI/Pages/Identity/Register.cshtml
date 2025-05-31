@@ -1,14 +1,14 @@
 ﻿@page
 @model GatewayAPI.Pages.Identity.RegisterModel
 @{
-    ViewData["Title"] = "Registration";
+    ViewData["Title"] = "Регистрация";
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
         <section>
             <form id="register" method="post">
-                <h2>Create a new account</h2>
+                <h4 class="text-center display-6">Регистрация</h4>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -19,7 +19,7 @@
 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Login" class="form-control" autocomplete="username" />
-                    <label asp-for="Input.Login" class="form-label">Login</label>
+                    <label asp-for="Input.Login" class="form-label">Имя пользователя</label>
                     <span asp-validation-for="Input.Login" class="text-danger"></span>
                 </div>
 
@@ -31,24 +31,24 @@
 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
-                    <label asp-for="Input.Password" class="form-label">Password</label>
+                    <label asp-for="Input.Password" class="form-label">Пароль</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
-                    <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
+                    <label asp-for="Input.ConfirmPassword" class="form-label">Подтверждение пароля</label>
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
 
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Phone" class="form-control" autocomplete="tel" />
-                    <label asp-for="Input.Phone" class="form-label">Phone (optional)</label>
+                    <label asp-for="Input.Phone" class="form-label">Телефон</label>
                     <span asp-validation-for="Input.Phone" class="text-danger"></span>
                 </div>
 
                 <div>
-                    <button id="register-submit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+                    <button id="register-submit" type="submit" class="w-100 btn btn-lg btn-primary">Зарегистрироваться</button>
                 </div>
             </form>
         </section>

@@ -18,6 +18,7 @@ namespace GatewayAPI.Pages.Courses
         [BindProperty]
         public int PageNumber { get; set; } = 0;
 
+
         [BindProperty]
         public List<Course> Courses { get; set; } = new List<Course>();
         public async Task<IActionResult> OnGet(int pageNumber)

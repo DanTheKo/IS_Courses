@@ -23,7 +23,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
 
 
@@ -51,6 +51,8 @@
                 const contentId = document.getElementById('mainContentId').value;
                 const contentType = "Base";
                 const contentData = editor.value();
+
+
 
                 const content = {
                     Id: contentId,
@@ -82,7 +84,6 @@
             });
 
         });
-
     </script>
 
     <script type="text/javascript" src="/js/view.js"></script>
@@ -92,7 +93,6 @@
 
 <div class="course-main">
     <!-- Левая панель с модулями -->
-
     <div class="sidebar-wrapper">
         <div class="sidebar left-sidebar">
             <div class="text-center medium">Модули курса</div>
@@ -100,14 +100,19 @@
                 <div class="module-list">
                     @foreach (var module in Model.CourseItems)
                     {
-                        <a href="/courses/editor/@Model.CurrentCourse.Id/@module.Id"
-                           class="module-item">
-                            @module.Title
-                        </a>
+                        <div class="module-item-container">
+                            <a href="/courses/editor/@Model.CurrentCourse.Id/@module.Id"
+                            class="module-item">
+                                @module.Title
+                            </a>
+                            <div class="module-actions">
+                                <button class="module-menu-btn" id="@module.Id">⋮</button>
+                            </div>
+                        </div>
                     }
-                    <button id="addModuleBtn" class="btn btn-sm btn-outline-primary">+ Добавить модуль</button>
                 </div>
             </div>
+            <button id="addModuleBtn" class="btn btn-sm btn-outline-primary">+ Добавить модуль</button>
         </div>
     </div>
     <!-- Основная область контента -->
@@ -115,9 +120,6 @@
 
         @if (Model.CurrentCourseItem != null)
         {
-            @*             <h2>@Model.CurrentCourseItem.Title</h2>
-            <h4>@Model.CurrentCourseItem.Type</h4> *@
-
             <form method="post"
             asp-all-route-data="currentCourseItemValues">
                 <input hidden id="courseItemId" value="@Model.CurrentCourseItem.Id" />
@@ -128,15 +130,14 @@
                 <div class="form-group">
                     <input id="courseItemType" asp-for="CurrentCourseItem.Type" list="itemsList" class="borderless-input medium form-control" placeholder="Тип модуля" />
                     <datalist id="itemsList">
-                        <option value="Lecture">Lecture</option>
-                        <option value="Practice">Practice</option>
-                        <option value="Test">Test</option>
+                        <option value="Лекция">Лекция</option>
+                        <option value="Практика">Практика</option>
+                        <option value="Тест">Тест</option>
                     </datalist>
                 </div>
 
             </form>
             <textarea id="easymde"></textarea>
-
 
 
 
@@ -158,10 +159,10 @@
                             else if (content.Type == "Video")
                             {
                                 <iframe width="560"
-                                        height="315"
-                                        src="http://www.youtube.com/embed/fxCEcPxUbYA"
-                                        frameborder="0"
-                                        allowfullscreen></iframe>
+                                height="315"
+                                src="http://www.youtube.com/embed/fxCEcPxUbYA"
+                                frameborder="0"
+                                allowfullscreen></iframe>
                             }
                             else if (content.Type == "Code")
                             {
@@ -181,10 +182,8 @@
                         </div>
                     }
                 }
-                
-            </div>
 
-            <!-- Toolbar для добавления контента -->
+            </div>
 
         }
         else
@@ -194,17 +193,22 @@
     </div>
     <div class="sidebar-wrapper">
         <div class="sidebar right-sidebar">
-@*             <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">Текст
-            </button>
-            <button class="btn btn-sm btn-outline-primary add-content" data-type="Image">
-                Изображение
-            </button>
-            <button class="btn btn-sm btn-outline-primary add-content" data-type="Video">
-                Видео
-            </button>
-            <button class="btn btn-sm btn-outline-primary add-content" data-type="Code">Код
-            </button> *@
-            <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить</button>
+            @if (Model.CurrentCourseItem != null)
+            {
+@*                 <button class="btn btn-sm btn-outline-primary add-content" data-type="Text">
+                    Текст
+                </button>
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Image">
+                    Изображение
+                </button>
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Video">
+                    Видео
+                </button>
+                <button class="btn btn-sm btn-outline-primary add-content" data-type="Code">
+                    Код
+                </button> *@
+                <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить</button>
+            }
         </div>
     </div>
 </div>
@@ -214,7 +218,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Новый модуль</h5>
+                <h4 class="display-6">Создание модуля</h4>
             </div>
 
             <form id="moduleForm" method="post"
@@ -224,15 +228,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Название модуля</label>
-                        <input asp-for="CurrentCourseItem.Title" id="title"class="form-control" />
+                        <input asp-for="NewCourseItem.Title" id="title"class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Тип модуля</label>
-                        <select asp-for="@Model.CurrentCourseItem.Type" class="form-control">
-                            <option value="Lecture">Lecture</option>
-                            <option value="Practice">Practice</option>
-                            <option value="Test">Test</option>
-                        </select>
+                        <input id="courseItemType" asp-for="NewCourseItem.Type" list="itemsList" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">

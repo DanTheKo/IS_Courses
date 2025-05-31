@@ -1,4 +1,5 @@
 using GatewayAPI.Grpc;
+using GatewayAPI.PageFilters;
 using GatewayAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace GatewayAPI.Pages.Courses
 {
     [Authorize]
+    [RedirectByAccess("id", "/index")]
     public class ViewModel : PageModel
     {
         private readonly ILogger<ViewModel> _logger;

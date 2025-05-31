@@ -31,7 +31,7 @@ namespace GatewayAPI.Services
                     {
                         Duration = TimeSpan.FromHours(10d).ToString(),
                         IsDeleted = false,
-                        Image = "пикча"
+                        Image = "img"
                     }
                 };
                 return await _client.CreateCourseAsync(request);

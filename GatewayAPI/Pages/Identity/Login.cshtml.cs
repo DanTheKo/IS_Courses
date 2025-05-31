@@ -1,3 +1,4 @@
+using GatewayAPI.Grpc;
 using GatewayAPI.PageFilters;
 using GatewayAPI.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -25,6 +26,10 @@ namespace GatewayAPI.Pages.Identity
 
         [BindProperty]
         public InputModel Input { get; set; } = new InputModel();
+        [BindProperty]
+        public AuthenticationResponse Identity { get; set; }
+        [BindProperty]
+        public UserInfoResponse UserInfo { get; set; }
 
         public class InputModel
         {
@@ -40,16 +45,15 @@ namespace GatewayAPI.Pages.Identity
 
         }
 
-
         public async Task<IActionResult> OnPostLogin()
         {
-
             if (await IsValidUser(Input.Email, Input.Password))
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, Input.Email),
-                    new Claim(ClaimTypes.Role, "User")
+                    new Claim(ClaimTypes.Name, UserInfo.Username),
+                    new Claim(ClaimTypes.NameIdentifier, Identity.UserId),
+                    new Claim(ClaimTypes.Role, Identity.Role)
                 };
 
                 var identity = new ClaimsIdentity(claims, "Cookies");
@@ -65,8 +69,9 @@ namespace GatewayAPI.Pages.Identity
 
         private async Task<bool> IsValidUser(string login, string password)
         {
-            var responce = await _authClient.AuthenticateAsync(login, password);
-            return responce.Success;
+            Identity = await _authClient.AuthenticateAsync(login, password);
+            UserInfo = await _authClient.GetUserInfoAsync(Identity.UserId);
+            return Identity.Success;
         }
 
     }
