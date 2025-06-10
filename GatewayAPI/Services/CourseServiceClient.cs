@@ -7,8 +7,8 @@ namespace GatewayAPI.Services
 {
     public class CourseServiceClient : IDisposable
     {
-        private readonly GrpcChannel _channel;
-        private readonly Courses.CoursesClient _client;
+        public GrpcChannel _channel;
+        public Courses.CoursesClient _client;
         private readonly IRabbitMqService _rabbitMq;
         public CourseServiceClient(string serviceUrl, IRabbitMqService rabbitMq)
         {
@@ -77,7 +77,7 @@ namespace GatewayAPI.Services
             }
             catch (RpcException ex)
             {
-                throw new Exception($"Failed to get course: {ex.Status.Detail}", ex);
+                throw new Exception($"Failed to get courses: {ex.Status.Detail}", ex);
             }
         }
 
@@ -259,7 +259,14 @@ namespace GatewayAPI.Services
                     Data = data
                 };
                 await _rabbitMq.SendMessageAsync(request);
-                return new Content();
+                Content content = new Content()
+                {
+                    Id = id,
+                    Data = data,
+                    Type = type
+                };
+
+                return content;
             }
             catch (RpcException ex)
             {
