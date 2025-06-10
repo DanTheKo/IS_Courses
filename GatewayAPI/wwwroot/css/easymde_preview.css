@@ -8,5 +8,10 @@
     padding: 10px;
     font: inherit;
     z-index: 0;
-    word-wrap: break-word
+    word-wrap: break-word;
 }
+
+.editor-preview-full {
+    height: auto;
+}
+

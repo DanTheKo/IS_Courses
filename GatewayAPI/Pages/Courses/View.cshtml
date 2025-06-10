@@ -20,6 +20,7 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
+    <script type="text/javascript" src="/js/view.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const content = @Html.Raw(Json.Serialize(Model.Contents.Count > 0 ? Model.Contents.First().Data: ""));
@@ -35,8 +36,11 @@
             }
             editor.codemirror.setOption("readOnly", true);
             editor.togglePreview();
+
         });
+
     </script>
+    
 @*     <script>hljs.highlightAll();</script> *@
 
 }
@@ -51,10 +55,12 @@
                 <div class="module-list">
                     @foreach (var module in Model.CourseItems)
                     {
-                        <a href="/courses/view/@Model.CurrentCourse.Id/@module.Id"
-                           class="module-item">
-                            @module.Title
-                        </a>
+                        <div class="module-item-container">
+                            <a href="/courses/view/@Model.CurrentCourse.Id/@module.Id"
+                               class="module-item">
+                                @module.Order. @module.Title
+                            </a>
+                        </div>
                     }
                     @* <button id="addModuleBtn" class="btn btn-sm btn-outline-primary">+ Добавить модуль</button> *@
                 </div>

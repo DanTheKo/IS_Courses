@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Grpc.Core;
 using GatewayAPI.Services;
+using GatewayAPI.RabbitMq;
+using Serilog;
 
 namespace GatewayAPI
 {
@@ -20,49 +22,65 @@ namespace GatewayAPI
                 options.LoginPath = "/Identity/Login"; // Путь к странице входа
                 options.AccessDeniedPath = "/Error"; // Путь при отказе в доступе
             });
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log-.txt",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7)
+            .CreateLogger();
 
-            builder.Services.AddSingleton<AuthorizationServiceClient>(provider =>
+            builder.Host.UseSerilog();
+
+            builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>(provider =>
             {
-                var serviceUrl = "http://localhost:5125";
-                return new AuthorizationServiceClient(serviceUrl);
+                return new RabbitMqService(queue: "CoursesQueue");
             });
-            builder.Services.AddSingleton<CourseServiceClient>(provider =>
             {
-                var serviceUrl = "http://localhost:5057";
-                return new CourseServiceClient(serviceUrl);
-            });
-            builder.Services.AddSingleton<AccessServiceClient>(provider =>
-            {
-                var serviceUrl = "http://localhost:5122";
-                return new AccessServiceClient(serviceUrl);
-            });
+                builder.Services.AddSingleton<AuthorizationServiceClient>(provider =>
+                {
+                    var serviceUrl = "http://localhost:5125";
+                    return new AuthorizationServiceClient(serviceUrl);
+                });
+                builder.Services.AddSingleton<CourseServiceClient>(provider =>
+                {
+                    var serviceUrl = "http://localhost:5057";
+                    return new CourseServiceClient(serviceUrl, provider.GetRequiredService<IRabbitMqService>());
+                });
+                builder.Services.AddSingleton<AccessServiceClient>(provider =>
+                {
+                    var serviceUrl = "http://localhost:5122";
+                    return new AccessServiceClient(serviceUrl);
+                });
 
-            var app = builder.Build();
+
+                var app = builder.Build();
 
 
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                // Configure the HTTP request pipeline.
+                if (!app.Environment.IsDevelopment())
+                {
+                    app.UseExceptionHandler("/Error");
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                }
+
+
+                app.UseHttpsRedirection();
+                app.UseStaticFiles();
+
+                app.UseRouting();
+
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+
+                app.MapRazorPages();
+
+
+                app.Run();
             }
-
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-
-            app.MapRazorPages();
-
-
-            app.Run();
         }
     }
 }

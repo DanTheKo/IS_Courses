@@ -1,6 +1,7 @@
 using IdentityService.Data;
 using IdentityService.Repositories;
 using IdentityService.Services;
+using Serilog;
 
 namespace IdentityService;
 
@@ -13,6 +14,12 @@ public class Program
         // Add services to the container.
         builder.Services.AddGrpc();
         builder.Services.AddDbContext<IdentityDbContext>();
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()                     
+            .WriteTo.Console()                                
+        .CreateLogger();
+
+        builder.Host.UseSerilog();
 
         var app = builder.Build();
 

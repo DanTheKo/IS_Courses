@@ -1,5 +1,6 @@
 using AccessService.Data;
 using AccessService.Services;
+using Serilog;
 
 namespace AccessService;
 
@@ -12,6 +13,12 @@ public class Program
         builder.Services.AddGrpc();
         builder.Services.AddDbContext<AccessDbContext>();
 
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.Console()
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
         var app = builder.Build();
 
         app.MapGrpcService<Services.AccessService>();

@@ -19,6 +19,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
   </ItemGroup>
 	
 		<ItemGroup>
@@ -26,7 +28,7 @@
   </ItemGroup>
 	
 		<ItemGroup>
-		  <Content Remove="wwwroot\js\view.js" />
+		  <Content Remove="wwwroot\js\editor.js" />
 		</ItemGroup>
 	
 		<ItemGroup>
@@ -41,7 +43,7 @@
 		</ItemGroup>
 	
 		<ItemGroup>
-		  <None Include="wwwroot\js\view.js" />
+		  <None Include="wwwroot\js\editor.js" />
 		</ItemGroup>
 
 </Project>

@@ -42,6 +42,7 @@ namespace CourseService.Services
 
         public override async Task<Grpc.Course> GetCourse(GetByIdRequest request, ServerCallContext context)
         {
+            _logger.LogInformation($"Trying to get course {request.Id}");
             var course = await _courseRepository.GetWithItemsAsync(Guid.Parse(request.Id));
             if (course == null)
             {
@@ -52,6 +53,7 @@ namespace CourseService.Services
 
         public override async Task<Grpc.PaginatedResponseCourse> GetCourses(PaginationRequest request, ServerCallContext context)
         {
+            _logger.LogInformation($"Trying to get {request.PageSize} courses");
             var courses = await _courseRepository.GetAllAsync(request.PageNumber * request.PageSize, request.PageSize);
             PaginatedResponseCourse responce = new PaginatedResponseCourse();
             responce.TotalCount = courses.Count();

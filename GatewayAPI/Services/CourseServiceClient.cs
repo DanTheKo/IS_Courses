@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using GatewayAPI.Grpc;
+using GatewayAPI.RabbitMq;
 
 namespace GatewayAPI.Services
 {
@@ -8,14 +9,15 @@ namespace GatewayAPI.Services
     {
         private readonly GrpcChannel _channel;
         private readonly Courses.CoursesClient _client;
-
-        public CourseServiceClient(string serviceUrl)
+        private readonly IRabbitMqService _rabbitMq;
+        public CourseServiceClient(string serviceUrl, IRabbitMqService rabbitMq)
         {
             if (string.IsNullOrWhiteSpace(serviceUrl))
                 throw new ArgumentException("Service URL cannot be null or empty", nameof(serviceUrl));
 
             _channel = GrpcChannel.ForAddress(serviceUrl);
             _client = new Courses.CoursesClient(_channel);
+            _rabbitMq = rabbitMq;
         }
 
 
@@ -248,13 +250,16 @@ namespace GatewayAPI.Services
         {
             try
             {
+                //await _rabbitMq.SendMessageAsync("Try to update " + id);
+                
                 var request = new ContentRequest
                 {
                     Id = id,
                     Type = type,
                     Data = data
                 };
-                return await _client.UpdateContentAsync(request);
+                await _rabbitMq.SendMessageAsync(request);
+                return new Content();
             }
             catch (RpcException ex)
             {
