@@ -16,3 +16,16 @@
         padding-left: 10px;
         color: #777;
     }
+
+.editor-toolbar.fullscreen {
+    top: 55px;
+    box-shadow: 0 .25rem .25rem rgba(0, 0, 0, .20);
+}
+.EasyMDEContainer .CodeMirror-fullscreen{
+    top:105px;
+}
+.editor-preview-side {
+    top: 105px;
+}
+
+

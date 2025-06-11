@@ -13,39 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function courseItemActionsMenu() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .module-actions-menu {
-            position: fixed;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            min-width: 120px;
-        }
-        .module-actions-menu button {
-            padding: 8px 12px;
-            text-align: left;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: small;
-        }
-        .module-actions-menu button:hover {
-            background-color: #f5f5f5;
-        }
-        .module-menu-btn {
-            position: relative;
-            cursor: pointer;
-        }
-        .module-menu-btn.active {
-            background-color: #f0f0f0;
-        }
-    `;
-    document.head.appendChild(style);
 
     const actionsMenu = document.createElement('div');
     actionsMenu.className = 'module-actions-menu';

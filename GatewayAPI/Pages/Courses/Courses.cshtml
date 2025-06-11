@@ -3,13 +3,28 @@
 @{
     ViewData["Title"] = $"Курсы";
 }
-<div class="course-list">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<div class="courses-container">
     @foreach (var course in Model.Courses)
     {
-        <div>
-            <a href="/courses/preview/@course.Id" class="course-item">
-                <div class="large">@course.Title</div>
-                <img src="/images/front-end-development.jpg" width="350"/>
+        <div class="course-card">
+            <a href="/courses/preview/@course.Id" class="course-link">
+                <div class="course-image-container">
+                    <img src="/images/front-end-development.jpg" alt="@course.Title" class="course-image" />
+                    <div class="course-badge">Новый</div>
+                </div>
+                <div class="course-content">
+                    <h3 class="course-title">@course.Title</h3>
+                    <p class="course-description">@course.Description</p>
+                    <div class="course-meta">
+                        <span class="course-duration"><i class="fas fa-clock"></i> 10 часов</span>
+                        <span class="course-level"><i class="fas fa-signal"></i> Начальный</span>
+                    </div>
+                </div>
             </a>
         </div>
     }
