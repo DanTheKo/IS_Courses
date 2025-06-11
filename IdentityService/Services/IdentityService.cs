@@ -7,8 +7,8 @@ namespace IdentityService.Services
 {
     public class IdentityService : Authorization.AuthorizationBase
     {
-        private readonly ILogger<IdentityService> _logger;
-        private readonly IdentityRepository _identityRepository;
+        public ILogger<IdentityService> _logger;
+        public IdentityRepository _identityRepository;
         //private readonly ITokenService _tokenService;
 
         public IdentityService(ILogger<IdentityService> logger, IdentityDbContext context)
@@ -40,7 +40,7 @@ namespace IdentityService.Services
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, BCrypt.Net.BCrypt.GenerateSalt(12));
 
-                var identity = new Identity
+                var identity = new Identity(Guid.NewGuid())
                 {
                     Login = request.Username,
                     Email = request.Email,
@@ -84,12 +84,11 @@ namespace IdentityService.Services
                     };
                 }
 
-                //var token = _tokenService.GenerateToken(user);
 
                 return new AuthenticationResponse
                 {
                     Success = true,
-                    Token = "tipo token",
+                    Token = "Token",
                     UserId = identity.Id.ToString(),
                     Role = identity.Role
                 };
@@ -113,8 +112,7 @@ namespace IdentityService.Services
                 Guid id;
                 Guid.TryParse(request.UserId, out id);
 
-                //var user = await _userRepository.GetByIdAsync(id);
-                Identity identity = new Identity();
+                var identity = await _identityRepository.GetByIdAsync(id);
                 if (identity == null)
                 {
                     throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
@@ -138,47 +136,5 @@ namespace IdentityService.Services
                 throw new RpcException(new Status(StatusCode.Internal, "Internal server error"));
             }
         }
-
-        //public override async Task<TokenValidationResponse> ValidateToken(TokenValidationRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var principal = _tokenService.ValidateToken(request.Token);
-        //        if (principal == null)
-        //        {
-        //            return new TokenValidationResponse
-        //            {
-        //                IsValid = false
-        //            };
-        //        }
-
-        //        var userId = principal.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-        //        var role = principal.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-
-        //        if (userId == null || role == null)
-        //        {
-        //            return new TokenValidationResponse
-        //            {
-        //                IsValid = false
-        //            };
-        //        }
-
-        //        return new TokenValidationResponse
-        //        {
-        //            IsValid = true,
-        //            UserId = userId,
-        //            Role = role
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Token validation failed");
-        //        return new TokenValidationResponse
-        //        {
-        //            IsValid = false
-        //        };
-        //    }
-        //}
-
     }
 }

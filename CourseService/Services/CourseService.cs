@@ -103,10 +103,9 @@ namespace CourseService.Services
             var courseItem = new Models.CourseItem(Guid.NewGuid())
             {
                 CourseId = Guid.Parse(request.CourseId),
-                ParentId = null,//!string.IsNullOrEmpty(request.ParentId) ? Guid.Parse(request.ParentId) : null,
-                Type = request.Type,
+                ParentId = null,
                 Title = request.Title,
-                Order = request.Order //await GetNextOrderForCourseItem(Guid.Parse(request.CourseId), request.ParentId != null ? Guid.Parse(request.ParentId) : null)
+                Order = request.Order
             };
 
             await _courseItemRepository.AddAsync(courseItem);

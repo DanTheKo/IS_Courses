@@ -21,8 +21,8 @@ public class Identity : Entity<Guid>
         Phone = phone;
         Role = role;
     }
-    public Identity() {
-        Id = Guid.NewGuid();
+    public Identity(Guid id) {
+        Id = id;
         Login = "";
         Password = "";
         Email = "";

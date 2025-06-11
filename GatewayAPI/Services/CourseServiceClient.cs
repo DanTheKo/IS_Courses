@@ -21,7 +21,7 @@ namespace GatewayAPI.Services
         }
 
 
-        public async Task<Course> CreateCourseAsync(string title, string description)
+        public virtual async Task<Course> CreateCourseAsync(string title, string description)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace GatewayAPI.Services
         }
 
 
-        public async Task<Course> GetCourseAsync(string id)
+        public virtual async Task<Course> GetCourseAsync(string id)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace GatewayAPI.Services
             }
         }
 
-        public async Task<CourseItem> GetCourseItemAsync(string id)
+        public virtual async Task<CourseItem> GetCourseItemAsync(string id)
         {
             try
             {
@@ -229,7 +229,7 @@ namespace GatewayAPI.Services
                 throw new Exception($"Failed to create content: {ex.Status.Detail}", ex);
             }
         }
-        public async Task<Content> GetContentAsync(string id)
+        public virtual async Task<Content> GetContentAsync(string id)
         {
             try
             {

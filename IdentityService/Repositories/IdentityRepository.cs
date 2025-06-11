@@ -16,36 +16,36 @@ namespace IdentityService.Repositories
             _context = context;
         }
 
-        public async Task<Identity?> GetByIdAsync(Guid id)
+        public virtual async Task<Identity?> GetByIdAsync(Guid id)
         {
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<Identity?> GetByUsernameAsync(string username)
+        public virtual async Task<Identity?> GetByUsernameAsync(string username)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Login == username);
         }
 
-        public async Task<Identity?> GetByEmailAsync(string email)
+        public virtual async Task<Identity?> GetByEmailAsync(string email)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task AddAsync(Identity user)
+        public virtual async Task AddAsync(Identity user)
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Identity user)
+        public virtual async Task UpdateAsync(Identity user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public virtual async Task DeleteAsync(Guid id)
         {
             var user = await GetByIdAsync(id);
             if (user != null)
