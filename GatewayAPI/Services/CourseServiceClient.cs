@@ -52,10 +52,6 @@ namespace GatewayAPI.Services
                 var request = new GetByIdRequest { Id = id };
                 return await _client.GetCourseAsync(request);
             }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                return null;
-            }
             catch (RpcException ex)
             {
                 throw new Exception($"Failed to get course: {ex.Status.Detail}", ex);
@@ -70,10 +66,6 @@ namespace GatewayAPI.Services
                 request.PageNumber = pageNumber;
                 request.PageSize = pageSize;
                 return await _client.GetCoursesAsync(request);
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                return null;
             }
             catch (RpcException ex)
             {
@@ -122,8 +114,8 @@ namespace GatewayAPI.Services
                 {
                     CourseId = courseId,
                     ParentId = parentId,
-                    Type = type,
-                    Title = title,
+                    Type = type == string.Empty ? "Type" : "Type",
+                    Title = title == string.Empty ? "Title" : "Title",
                     Order = order
                     
                 };
@@ -141,10 +133,6 @@ namespace GatewayAPI.Services
             {
                 var request = new GetByIdRequest { Id = id };
                 return await _client.GetCourseItemAsync(request);
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                return null;
             }
             catch (RpcException ex)
             {
@@ -235,10 +223,6 @@ namespace GatewayAPI.Services
             {
                 var request = new GetByIdRequest { Id = id };
                 return await _client.GetContentAsync(request);
-            }
-            catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
-            {
-                return null;
             }
             catch (RpcException ex)
             {

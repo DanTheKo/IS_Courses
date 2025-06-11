@@ -63,7 +63,7 @@ namespace GatewayAPI.Pages.Courses
 
                 throw;
             }
-            return Page();
+            return RedirectToPage();
         }
     }
 }

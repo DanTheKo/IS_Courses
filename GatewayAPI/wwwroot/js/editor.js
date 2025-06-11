@@ -66,6 +66,7 @@ function courseItemActionsMenu() {
         console.log('Удалить модуль с ID:', id);
         if (confirm('Вы уверены, что хотите удалить этот модуль?')) {
             deleteCourseItem(id);
+            actionsMenu.currentModule.parentElement.parentElement.remove();
         }
         hideActionsMenu();
     });

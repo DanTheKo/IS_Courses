@@ -24,64 +24,64 @@
     <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
+        const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
 
 
-            const element = document.getElementById("easymde");
+        const element = document.getElementById("easymde");
 
-            const editor = new EasyMDE({
-                element: element,
-                spellChecker: false
-            });
-            //const editor = new EasyMDE(element);
-            if (content) {
-                editor.value(content);
-            }
+        const editor = new EasyMDE({
+        element: element,
+        spellChecker: false
+        });
+        //const editor = new EasyMDE(element);
+        if (content) {
+        editor.value(content);
+        }
 
-            const toolbar = document.querySelector('.editor-toolbar');
-            const newParent = document.querySelector('.sidebar.right-sidebar');
-            const referenceElement = document.getElementById('saveAllBtn');
-            newParent.insertBefore(toolbar, referenceElement);
+        const toolbar = document.querySelector('.editor-toolbar');
+        const newParent = document.querySelector('.sidebar.right-sidebar');
+        const referenceElement = document.getElementById('saveAllBtn');
+        newParent.insertBefore(toolbar, referenceElement);
 
-            document.getElementById('saveAllBtn').addEventListener('click', async function () {
-                const courseItemId = document.getElementById('courseItemId').value;
-                const courseItemTitle = document.getElementById('courseItemTitle').value;
-                const courseItemType = document.getElementById('courseItemType').value;
+        document.getElementById('saveAllBtn').addEventListener('click', async function () {
+        const courseItemId = document.getElementById('courseItemId').value;
+        const courseItemTitle = document.getElementById('courseItemTitle').value;
+        const courseItemType = document.getElementById('courseItemType').value;
 
-                const contentId = document.getElementById('mainContentId').value;
-                const contentType = "Base";
-                const contentData = editor.value();
+        const contentId = document.getElementById('mainContentId').value;
+        const contentType = "Base";
+        const contentData = editor.value();
 
 
 
-                const content = {
-                    Id: contentId,
-                    Type: contentType,
-                    Data: contentData,
-                    Order: 0,
-                    CourseItemId: courseItemId
-                };
-                const courseItem = {
-                    Id: courseItemId,
-                    Title: courseItemTitle,
-                    Type: courseItemType
-                }
+        const content = {
+        Id: contentId,
+        Type: contentType,
+        Data: contentData,
+        Order: 0,
+        CourseItemId: courseItemId
+        };
+        const courseItem = {
+        Id: courseItemId,
+        Title: courseItemTitle,
+        Type: courseItemType
+        }
 
-                const data = {
-                    Content: content,
-                    CourseItem: courseItem
-                };
+        const data = {
+        Content: content,
+        CourseItem: courseItem
+        };
 
-                const response = await fetch('?handler=SaveData', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: JSON.stringify(data)
-                });
+        const response = await fetch('?handler=SaveData', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(data)
+        });
 
-            });
+        });
 
         });
     </script>
@@ -98,15 +98,14 @@
             <div class="text-center medium">Модули курса</div>
             <div>
                 <div class="module-list">
-                    @foreach (var module in Model.CourseItems)
-                    {
+                    @for(int i = 0; i<Model.CourseItems.Count; i++){
                         <div class="module-item-container">
-                            <a href="/courses/editor/@Model.CurrentCourse.Id/@module.Id"
+                            <a href="/courses/editor/@Model.CurrentCourse.Id/@Model.CourseItems[i].Id"
                             class="module-item">
-                                @module.Order. @module.Title
+                                @(i+1). @Model.CourseItems[i].Title
                             </a>
                             <div class="module-actions">
-                                <button class="module-menu-btn" id="@module.Id">⋮</button>
+                                <button class="module-menu-btn" id="@Model.CourseItems[i].Id">⋮</button>
                             </div>
                         </div>
                     }
@@ -117,13 +116,24 @@
     </div>
     <!-- Основная область контента -->
     <div class="main-content" >
+        @if (!ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach (var error in ViewContext.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
 
         @if (Model.CurrentCourseItem != null)
         {
             <form method="post"
             asp-all-route-data="currentCourseItemValues">
                 <input hidden id="courseItemId" value="@Model.CurrentCourseItem.Id" />
-                <input hidden id="mainContentId" value="@Model.Contents.First().Id" />
+                <input hidden id="mainContentId" value="@(Model.Contents.Count > 0 ? Model.Contents.First().Id : "")" />
                 <div class="form-group">
                     <input id="courseItemTitle" asp-for="CurrentCourseItem.Title" class="borderless-input large form-control" placeholder="Название модуля" />
                 </div>
@@ -228,11 +238,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Название модуля</label>
-                        <input asp-for="NewCourseItem.Title" id="title"class="form-control" />
+                        <input id="newCourseItemTitle" asp-for="NewCourseItem.Title" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Тип модуля</label>
-                        <input id="courseItemType" asp-for="NewCourseItem.Type" list="itemsList" class="form-control" />
+                        <input id="newCourseItemType" asp-for="NewCourseItem.Type"  list="itemsList" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">

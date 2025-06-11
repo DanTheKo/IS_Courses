@@ -104,6 +104,7 @@ namespace CourseService.Services
             {
                 CourseId = Guid.Parse(request.CourseId),
                 ParentId = null,
+                Type = request.Type,
                 Title = request.Title,
                 Order = request.Order
             };
