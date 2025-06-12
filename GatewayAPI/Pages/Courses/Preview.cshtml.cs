@@ -65,5 +65,16 @@ namespace GatewayAPI.Pages.Courses
             }
             return RedirectToPage();
         }
+
+        public class Entity
+        {
+            public string Id { get; set; }
+        }
+        public async Task<IActionResult> OnPostDeleteCourseAsync(string courseId)
+        {
+            await _courseClient.DeleteCourseAsync(courseId);
+            return Redirect($"/courses");
+        }
+
     }
 }

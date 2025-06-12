@@ -27,7 +27,8 @@ namespace GatewayAPI.Pages.Courses
             try
             {
                 var responce = await _courseClient.GetCoursesAsync(PageNumber, 30);
-                Courses.AddRange(responce.Items);
+                var items = responce.Items.Reverse();
+                Courses.AddRange(items);
             }
             catch (Exception)
             {

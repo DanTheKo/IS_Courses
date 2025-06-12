@@ -3,25 +3,54 @@
 @{
     ViewData["Title"] = "Курсы";
 }
-@* <div class ="video-background">
-    <video autoplay loop muted playsinline disablePictureInPicture controlsList="nodownload noplaybackrate">
-        <source src="/images/0_Sunset_Clouds_3840x2160.mp4" type="video/mp4" />
-
-    </video>
-</div> *@
-
-<div class="text-center">
-    <h1 class="display-4">Приветствуем вас!</h1>
-    <form action="/Courses">
-        <button class="btn btn-sm btn-outline-primary large">Посмотреть курсы</button>
-    </form>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet" asp-append-version="true">
+    <link href="/css/index.css" rel="stylesheet" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Раскройте свой потенциал</h1>
+        <p class="hero-subtitle">Онлайн-курсы от ведущих экспертов для вашего профессионального роста</p>
+        <a href="/Courses" class="hero-button">
+            <span>Начать обучение</span>
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    <div class="hero-image-container">
+        <img src="/images/courses_main_poster.jpg" alt="Онлайн-обучение" class="hero-image" />
+    </div>
 </div>
-<div class="center-container-column">
-    <img class="full-width" src="/images/courses_main_poster.jpg" />
-    <div class="text-center">
-        <h1 class="display-5">
-            Откройте для себя новые возможности с нашими онлайн-курсами!
-        </h1>
+
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают нас</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="far fa-clock fa-2x"></i>
+                </div>
+                <h3 class="feature-title">Гибкий график</h3>
+                <p class="feature-text">Обучайтесь в удобное для вас время без дедлайнов</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar fa-2x"></i>
+                </div>
+                <h3 class="feature-title">Практические навыки</h3>
+                <p class="feature-text">Только актуальные знания, применимые в реальной работе</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-certificate fa-2x"></i>
+                </div>
+                <h3 class="feature-title">Сертификаты</h3>
+                <p class="feature-text">Подтверждение ваших знаний официальным документом</p>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -2,6 +2,7 @@
 using IdentityService.Models;
 using IdentityService.Repositories;
 using IdentityService.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.Services
 {
@@ -113,9 +114,10 @@ namespace IdentityService.Services
                 Guid.TryParse(request.UserId, out id);
 
                 var identity = await _identityRepository.GetByIdAsync(id);
+                
                 if (identity == null)
                 {
-                    throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
+                    return null;
                 }
 
                 return new UserInfoResponse

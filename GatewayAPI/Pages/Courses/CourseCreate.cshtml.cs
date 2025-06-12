@@ -15,7 +15,7 @@ namespace GatewayAPI.Pages.Courses
         public CourseServiceClient _courseClient;
 
         [BindProperty]
-        public Course Course { get; set; } = new();
+        public DTOCourse Course { get; set; } = new();
 
         public CourseCreateModel(ILogger<CourseCreateModel> logger, CourseServiceClient courseClient)
         {
@@ -27,16 +27,24 @@ namespace GatewayAPI.Pages.Courses
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+
+        public class DTOCourse
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
+
+        }
+
+        public async Task<IActionResult> OnPostAsync(string title, string description)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var responce = await _courseClient.CreateCourseAsync(Course.Title, Course.Description);
+            var responce = await _courseClient.CreateCourseAsync(title, description);
             
-            return Redirect($"/Courses/CourseUpdate/{responce.Id}");
+            return Redirect($"/Courses");
         }
     }
 }

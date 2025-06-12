@@ -150,6 +150,7 @@ header {
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-top: 0.5rem;
+    width: max-content;
 }
 
 .dropdown-item {
@@ -168,7 +169,7 @@ header {
 
 /* Ёффект при скролле */
 header.scrolled {
-    background-color: rgb(237, 241, 255, 0.85);
+    background-color: rgb(250 240 255 / 85%);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
@@ -536,3 +537,9 @@ footer {
 }
 
 /*Courses*/
+
+
+.btn-col {
+    margin: 2px 5px 2px 5px;
+    padding: 3px;
+}

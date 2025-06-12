@@ -33,14 +33,14 @@ namespace GatewayAPI.Pages.Identity
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Username or email required")]
+            [Required(ErrorMessage = "Имя пользователя или Email обязятельны")]
             public string Email { get; set; }
 
-            [Required(ErrorMessage = "Password required")]
+            [Required(ErrorMessage = "Пароль обязателен")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me")]
+            [Display(Name = "Запомнить меня")]
             public bool RememberMe { get; set; }
 
         }
@@ -63,14 +63,17 @@ namespace GatewayAPI.Pages.Identity
                 return RedirectToPage($"/index");
             }
 
-            ModelState.AddModelError("", "Incorrect login or password");
+            ModelState.AddModelError("", "Неверный логин или пароль");
             return Page();
         }   
 
         private async Task<bool> IsValidUser(string login, string password)
         {
             Identity = await _authClient.AuthenticateAsync(login, password);
-            UserInfo = await _authClient.GetUserInfoAsync(Identity.UserId);
+            if (Identity.Success)
+            {
+                UserInfo = await _authClient.GetUserInfoAsync(Identity.UserId);
+            }
             return Identity.Success;
         }
 

@@ -49,6 +49,14 @@
                     <a href="/courses/editor/@Model.Course.Id" class="btn btn-outline-success btn-lg action-btn">
                         <i class="fas fa-edit"></i> Редактировать курс
                     </a>
+                    <form method="post" style="display: contents"
+                          asp-page-handler="DeleteCourse">
+                        <input hidden name="courseId" id="courseId" asp-for="Course.Id" />
+                        <button  class="btn btn-outline-danger btn-lg action-btn">
+                            <i class="fas fa-edit"></i> Удалить курс
+                        </button>
+                    </form>
+
                 </div>
                 <div class="progress-container">
                     <div class="progress-info">
@@ -62,16 +70,30 @@
             }
             else
             {
-                <form id="getAccessForm" method="post" asp-page-handler="GetAccess" class="enroll-form">
-                    <button type="submit" class="btn btn-primary btn-lg enroll-btn">
-                        <i class="fas fa-user-plus"></i> Записаться на курс
-                    </button>
-                    <div class="enroll-benefits">
-                        <p><i class="fas fa-check-circle"></i> Полный доступ к материалам</p>
-                        <p><i class="fas fa-check-circle"></i> Поддержка преподавателя</p>
-                        <p><i class="fas fa-check-circle"></i> Сертификат по окончании</p>
+                <div class="action-buttons">
+                    <form id="getAccessForm" method="post" style="display: contents" asp-page-handler="GetAccess">
+
+                        <button type="submit" class="btn btn-primary btn-lg action-btn">
+                            <i class="fas fa-user-plus"></i> Записаться на курс
+                        </button>
+                    </form>
+                    <form method="post" style="display: contents"
+                          asp-page-handler="DeleteCourse">
+                        <input hidden name="courseId" id="courseId" asp-for="Course.Id" />
+                        <button class="btn btn-outline-danger btn-lg action-btn">
+                            <i class="fas fa-edit"></i> Удалить курс
+                        </button>
+                    </form>
+                    <div class="progress-container">
+                        <div class="enroll-benefits">
+                            <p><i class="fas fa-check-circle"></i> Полный доступ к материалам</p>
+                            <p><i class="fas fa-check-circle"></i> Поддержка преподавателя</p>
+                            <p><i class="fas fa-check-circle"></i> Сертификат по окончании</p>
+                        </div>
                     </div>
-                </form>
+                </div>
+
+
             }
         </div>
     </div>

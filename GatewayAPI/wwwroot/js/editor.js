@@ -6,6 +6,10 @@ document.getElementById('addModuleBtn').addEventListener('click', function () {
     modal.show();
 });
 
+document.getElementById('updateCourseBtn').addEventListener('click', function () {
+    var modal = new bootstrap.Modal(document.getElementById('courseModal'));
+    modal.show();
+});
 
 document.addEventListener('DOMContentLoaded', function () {
 

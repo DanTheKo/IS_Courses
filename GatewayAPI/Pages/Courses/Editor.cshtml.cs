@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using static GatewayAPI.Pages.Courses.CourseCreateModel;
 
 
 namespace GatewayAPI.Pages.Courses
@@ -25,6 +26,8 @@ namespace GatewayAPI.Pages.Courses
 
         [BindProperty]
         public Course CurrentCourse { get; set; }
+        [BindProperty]
+        public DTOCourse _CurrentCourse { get; set; }
         [BindProperty]
         public CourseItem CurrentCourseItem { get; set; }
         [BindProperty]
@@ -145,6 +148,21 @@ namespace GatewayAPI.Pages.Courses
 
         }
 
+        public async Task<IActionResult> OnPostUpdateCourseAsync(string courseId, string currentCourseTitle, string currentCourseDescription)
+        {
+            try
+            {
+                Course newItem = await _courseClient.UpdateCourseAsync(courseId, currentCourseTitle, currentCourseDescription);
+                return Redirect($"/courses/editor/{courseId}");
+            }
+            catch (Exception)
+            {
+
+                return new BadRequestResult();
+                throw;
+            }
+
+        }
         public class Entity
         {
             public string Id { get; set; }

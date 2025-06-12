@@ -23,14 +23,16 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/Courses">Курсы</a>
                         </li>
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Courses/CourseCreate">Создать курс</a>
+                                <a class="nav-link" href="/Courses">Мои курсы</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-page="/Courses/CourseUpdate">Обновить курс</a>
+                                <a class="nav-link" asp-area="" asp-page="/Courses/CourseCreate">Создать курс</a>
                             </li>
+
                         }
                     </ul>
 
@@ -52,9 +54,9 @@
                                     @User.Identity?.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" asp-area="" asp-page="/Account/Profile">Профиль</a></li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="" asp-page="/Identity/Logout" asp-page-handler="Logout">Выйти</a>
+                                    <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/Account/Profile">Профиль</a></li>
+                                    <li class ="nav-item">
+                                        <a class="nav-link" asp-area="" asp-page="/Identity/Logout" asp-page-handler="Logout">Выйти</a>
                                     </li>
                                 </ul>
                             </li>
