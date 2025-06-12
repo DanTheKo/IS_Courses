@@ -3,6 +3,9 @@ using Grpc.Core;
 using GatewayAPI.Services;
 using GatewayAPI.RabbitMq;
 using Serilog;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace GatewayAPI
 {
@@ -32,6 +35,24 @@ namespace GatewayAPI
 
             builder.Host.UseSerilog();
 
+
+            builder.Services.AddOpenTelemetry()
+                .WithTracing(tracerProviderBuilder =>
+                {
+                    tracerProviderBuilder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                            .AddService("Gateway"))
+                        .SetSampler(new AlwaysOnSampler())
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddJaegerExporter(opt =>
+                        {
+                            opt.Endpoint = new Uri("http://localhost:14268/api/traces");
+                            opt.Protocol = OpenTelemetry.Exporter.JaegerExportProtocol.HttpBinaryThrift;
+                        });
+                });
+
+
             builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>(provider =>
             {
                 return new RabbitMqService(queue: "CoursesQueue");
@@ -57,7 +78,6 @@ namespace GatewayAPI
                 var app = builder.Build();
 
 
-
                 // Configure the HTTP request pipeline.
                 if (!app.Environment.IsDevelopment())
                 {
@@ -74,7 +94,6 @@ namespace GatewayAPI
 
                 app.UseAuthentication();
                 app.UseAuthorization();
-
 
                 app.MapRazorPages();
 

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using CourseService.RabbitMq;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Serilog;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace CourseService;
 
@@ -20,13 +22,30 @@ public class Program
         builder.Services.AddScoped<Services.CourseService>();
 
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()                     // Минимальный уровень логирования
-            .WriteTo.Console()                             // Вывод в консоль
-            .WriteTo.File("logs/log-.txt",                 // Запись в файл
-                rollingInterval: RollingInterval.Day,      // Ротация по дням
-                retainedFileCountLimit: 7)                 // Хранить 7 файлов
+            .MinimumLevel.Information()
+            .WriteTo.Console()
+            .WriteTo.File("logs/log-.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7)
         .CreateLogger();
         builder.Host.UseSerilog();
+
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                        .AddService("CourseService"))
+                    .SetSampler(new AlwaysOnSampler())
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddJaegerExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://localhost:14268/api/traces");
+                        opt.Protocol = OpenTelemetry.Exporter.JaegerExportProtocol.HttpBinaryThrift;
+                    });
+            });
+
 
         builder.Services.AddHostedService<RabbitMqConsumerService>(provider =>
         {
