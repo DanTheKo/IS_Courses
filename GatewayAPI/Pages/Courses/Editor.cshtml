@@ -23,65 +23,92 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
     <script>
+                function showMessage(message) {
+            const msgElement = document.createElement('div');
+            msgElement.textContent = message;
+            msgElement.style.position = 'fixed';
+            msgElement.style.bottom = '20px';
+            msgElement.style.right = '20px';
+            msgElement.style.padding = '15px 25px';
+            msgElement.style.backgroundColor = '#fff';
+            msgElement.style.color = 'black';
+            msgElement.style.borderRadius = '5px';
+            msgElement.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            msgElement.style.zIndex = '1000';
+            msgElement.style.animation = 'fadein 0.5s, fadeout 0.5s 2.5s forwards';
+
+            document.body.appendChild(msgElement);
+
+            setTimeout(() => {
+                msgElement.remove();
+            }, 3000);
+        }
         document.addEventListener("DOMContentLoaded", function () {
-        const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
+            const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
 
 
-        const element = document.getElementById("easymde");
+            const element = document.getElementById("easymde");
 
-        const editor = new EasyMDE({
-        element: element,
-        spellChecker: false
-        });
-        //const editor = new EasyMDE(element);
-        if (content) {
-        editor.value(content);
-        }
+            const editor = new EasyMDE({
+            element: element,
+            spellChecker: false
+            });
+            //const editor = new EasyMDE(element);
+            if (content) {
+            editor.value(content);
+            }
 
-        const toolbar = document.querySelector('.editor-toolbar');
-        const newParent = document.querySelector('.sidebar.right-sidebar');
-        const referenceElement = document.getElementById('saveAllBtn');
-        newParent.insertBefore(toolbar, referenceElement);
+            const toolbar = document.querySelector('.editor-toolbar');
+            const newParent = document.querySelector('.sidebar.right-sidebar');
+            const referenceElement = document.getElementById('saveAllBtn');
+            newParent.insertBefore(toolbar, referenceElement);
 
-        document.getElementById('saveAllBtn').addEventListener('click', async function () {
-        const courseItemId = document.getElementById('courseItemId').value;
-        const courseItemTitle = document.getElementById('courseItemTitle').value;
-        const courseItemType = document.getElementById('courseItemType').value;
+            document.getElementById('saveAllBtn').addEventListener('click', async function () {
+                const courseItemId = document.getElementById('courseItemId').value;
+                const courseItemTitle = document.getElementById('courseItemTitle').value;
+                const courseItemType = document.getElementById('courseItemType').value;
 
-        const contentId = document.getElementById('mainContentId').value;
-        const contentType = "Base";
-        const contentData = editor.value();
+                const contentId = document.getElementById('mainContentId').value;
+                const contentType = "Base";
+                const contentData = editor.value();
 
 
 
-        const content = {
-        Id: contentId,
-        Type: contentType,
-        Data: contentData,
-        Order: 0,
-        CourseItemId: courseItemId
-        };
-        const courseItem = {
-        Id: courseItemId,
-        Title: courseItemTitle,
-        Type: courseItemType
-        }
+                const content = {
+                Id: contentId,
+                Type: contentType,
+                Data: contentData,
+                Order: 0,
+                CourseItemId: courseItemId
+                };
+                const courseItem = {
+                Id: courseItemId,
+                Title: courseItemTitle,
+                Type: courseItemType
+                }
 
-        const data = {
-        Content: content,
-        CourseItem: courseItem
-        };
+                const data = {
+                Content: content,
+                CourseItem: courseItem
+                };
 
-        const response = await fetch('?handler=SaveData', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-        },
-        body: JSON.stringify(data)
-        });
+                const response = await fetch('?handler=SaveData', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(data)
+                });
+                console.log('Raw response:', response);
+                if(response.ok){
+                   showMessage('Данные успешно сохранены!');
+                }else{
+                   showMessage('Ошибка! Данные не сохранены!');
+                }
 
-        });
+
+            });
 
         });
     </script>
@@ -218,7 +245,7 @@
                 <button class="btn btn-sm btn-outline-primary add-content" data-type="Code">
                     Код
                 </button> *@
-                <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить текст</button>
+                <button id="saveAllBtn" class="btn btn-sm btn-outline-success">Сохранить</button>
             }
         </div>
     </div>

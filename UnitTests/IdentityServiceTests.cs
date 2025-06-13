@@ -136,7 +136,7 @@ namespace UnitTests
             }
 
             [Fact]
-            public async Task ShouldThrowRpcException_WhenUserNotFound()
+            public async Task ShouldBeNull_WhenUserNotFound()
             {
                 // Arrange
                 var userId = Guid.NewGuid();
@@ -146,8 +146,8 @@ namespace UnitTests
                     .ReturnsAsync((Identity)null);
 
                 // Act & Assert
-                await Assert.ThrowsAsync<RpcException>(() =>
-                    _identityService.GetUserInfo(request, null));
+                var responce = await _identityService.GetUserInfo(request, null);
+                responce.Should().Be(null);
             }
         }
     }

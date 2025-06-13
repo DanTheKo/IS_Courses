@@ -1,0 +1,111 @@
+﻿
+
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 1000px;
+    opacity: 0.8;
+}
+
+    .cloud:before, .cloud:after {
+        content: '';
+        position: absolute;
+        background: white;
+        border-radius: 1000px;
+    }
+
+
+/*@keyframes float {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+
+    35% {
+        transform: translateX(-25px) translateY(-10px);
+    }
+
+    75% {
+        transform: translateX(25px) translateY(10px);
+    }
+
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+}*/
+
+/* Создаем несколько облаков разного размера */
+.cloud:nth-child(1) {
+    width: 200px;
+    height: 60px;
+    top: 15%;
+    left: 9%;
+    animation: float 15s infinite ease-in-out;
+}
+
+    .cloud:nth-child(1):before {
+        width: 50px;
+        height: 50px;
+        top: -20px;
+        left: 20px;
+    }
+
+    .cloud:nth-child(1):after {
+        width: 80px;
+        height: 80px;
+        top: -35px;
+        left: 60px;
+    }
+
+.cloud:nth-child(2) {
+    width: 300px;
+    height: 90px;
+    top: 40%;
+    left: 50%;
+    animation: float 20s infinite ease-in-out;
+}
+
+    .cloud:nth-child(2):before {
+        width: 90px;
+        height: 90px;
+        top: -30px;
+        left: 30px;
+    }
+
+    .cloud:nth-child(2):after {
+        width: 60px;
+        height: 60px;
+        top: -20px;
+        left: 150px;
+    }
+
+.cloud:nth-child(3) {
+    width: 150px;
+    height: 45px;
+    top: 70%;
+    left: 30%;
+    animation: float 12s infinite ease-in-out;
+}
+
+    .cloud:nth-child(3):before {
+        width: 40px;
+        height: 40px;
+        top: -15px;
+        left: 15px;
+    }
+
+    .cloud:nth-child(3):after {
+        width: 30px;
+        height: 30px;
+        top: -10px;
+        left: 60px;
+    }

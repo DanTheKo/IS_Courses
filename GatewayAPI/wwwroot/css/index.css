@@ -135,7 +135,7 @@
     font-size: 1rem;
 }
 a:hover {
-    color: white;
+    color: inherit;
 }
 
 @media (min-width: 768px) {

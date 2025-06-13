@@ -115,9 +115,8 @@ header {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(8px);
-    /*    background: radial-gradient(circle, rgb(121 55 255 / 25%) 0%, rgb(255 57 97 / 25%) 100%);*/
+    background: radial-gradient(circle, rgb(221 204 255) 0%, rgb(255 231 236) 100%);
     background-color: rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
@@ -168,11 +167,11 @@ header {
     }
 
 /* Ёффект при скролле */
-header.scrolled {
+/*header.scrolled {
     background-color: rgb(250 240 255 / 85%);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
-
+*/
 .content-toolbar {
     flex-direction: column;
     /*    bottom: 100px;*/
