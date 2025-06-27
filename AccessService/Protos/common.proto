@@ -1,0 +1,14 @@
+﻿/*syntax = "proto3";
+
+package common;
+
+message GetByIdRequest {
+  string id = 1;
+}
+
+message Empty {} 
+
+message Status {
+  bool success = 1;
+  string message = 2;
+}*/

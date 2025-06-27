@@ -40,22 +40,25 @@
         </div>
 
         <div class="course-actions">
-            @if (Model.Access)
+            @if (Model.Access || User.IsInRole("Admin"))
             {
                 <div class="action-buttons">
                     <a href="/courses/view/@Model.Course.Id" class="btn btn-primary btn-lg action-btn">
                         <i class="fas fa-play"></i> Начать обучение
                     </a>
+
+
                     <a href="/courses/editor/@Model.Course.Id" class="btn btn-outline-success btn-lg action-btn">
                         <i class="fas fa-edit"></i> Редактировать курс
                     </a>
                     <form method="post" style="display: contents"
                           asp-page-handler="DeleteCourse">
                         <input hidden name="courseId" id="courseId" asp-for="Course.Id" />
-                        <button  class="btn btn-outline-danger btn-lg action-btn">
+                        <button class="btn btn-outline-danger btn-lg action-btn">
                             <i class="fas fa-edit"></i> Удалить курс
                         </button>
                     </form>
+
 
                 </div>
                 <div class="progress-container">

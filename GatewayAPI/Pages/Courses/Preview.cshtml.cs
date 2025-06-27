@@ -26,6 +26,8 @@ namespace GatewayAPI.Pages.Courses
         public Course Course { get; set; }
         [BindProperty]
         public bool Access { get; set; }
+        [BindProperty]
+        public string AccessData { get; set; }
         public async Task<IActionResult> OnGet(string id)
         {
             try
@@ -36,6 +38,7 @@ namespace GatewayAPI.Pages.Courses
                 string? resourseId = Course.Id;
                 AccessResponce responce = await _accessClient.GetAccessAsync(identityId, resourseId);
                 Access = responce.HasAccess;
+                AccessData = responce.AccessData;
             }
             catch (Exception)
             {
@@ -66,10 +69,6 @@ namespace GatewayAPI.Pages.Courses
             return RedirectToPage();
         }
 
-        public class Entity
-        {
-            public string Id { get; set; }
-        }
         public async Task<IActionResult> OnPostDeleteCourseAsync(string courseId)
         {
             await _courseClient.DeleteCourseAsync(courseId);

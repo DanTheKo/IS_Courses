@@ -9,15 +9,15 @@ namespace GatewayAPI.Services
     {
         public GrpcChannel _channel;
         public Courses.CoursesClient _client;
-        private readonly IRabbitMqService _rabbitMq;
-        public CourseServiceClient(string serviceUrl, IRabbitMqService rabbitMq)
+/*        private readonly IRabbitMqService _rabbitMq;*/
+        public CourseServiceClient(string serviceUrl)
         {
             if (string.IsNullOrWhiteSpace(serviceUrl))
                 throw new ArgumentException("Service URL cannot be null or empty", nameof(serviceUrl));
 
             _channel = GrpcChannel.ForAddress(serviceUrl);
             _client = new Courses.CoursesClient(_channel);
-            _rabbitMq = rabbitMq;
+/*            _rabbitMq = rabbitMq;*/
         }
 
 
@@ -114,8 +114,8 @@ namespace GatewayAPI.Services
                 {
                     CourseId = courseId,
                     ParentId = parentId,
-                    Type = type == string.Empty ? "Type" : "Type",
-                    Title = title == string.Empty ? "Title" : "Title",
+                    Type = type == string.Empty ? "Type" : type,
+                    Title = title == string.Empty ? "Title" : title,
                     Order = order
                     
                 };
@@ -242,13 +242,15 @@ namespace GatewayAPI.Services
                     Type = type,
                     Data = data
                 };
-                await _rabbitMq.SendMessageAsync(request);
-                Content content = new Content()
+
+                Content content = await _client.UpdateContentAsync(request);
+                //await _rabbitMq.SendMessageAsync(request);
+/*                Content content = new Content()
                 {
                     Id = id,
                     Data = data,
                     Type = type
-                };
+                };*/
 
                 return content;
             }

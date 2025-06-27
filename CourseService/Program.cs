@@ -24,13 +24,13 @@ public class Program
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Console()
-            .WriteTo.File("logs/log-.txt",
+/*            .WriteTo.File("logs/log-.txt",
                 rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7)
+                retainedFileCountLimit: 7)*/
         .CreateLogger();
         builder.Host.UseSerilog();
 
-        builder.Services.AddOpenTelemetry()
+/*        builder.Services.AddOpenTelemetry()
             .WithTracing(tracerProviderBuilder =>
             {
                 tracerProviderBuilder
@@ -44,13 +44,13 @@ public class Program
                         opt.Endpoint = new Uri("http://localhost:14268/api/traces");
                         opt.Protocol = OpenTelemetry.Exporter.JaegerExportProtocol.HttpBinaryThrift;
                     });
-            });
+            });*/
 
 
-        builder.Services.AddHostedService<RabbitMqConsumerService>(provider =>
+/*        builder.Services.AddHostedService<RabbitMqConsumerService>(provider =>
         {
             return new RabbitMqConsumerService(provider.GetRequiredService<IServiceScopeFactory>(),queue: "CoursesQueue");
-        });
+        });*/
 
         var app = builder.Build();
 

@@ -28,15 +28,15 @@ namespace GatewayAPI
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .WriteTo.Console()
-                .WriteTo.File("logs/log-.txt",
+/*                .WriteTo.File("logs/log-.txt",
                     rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 7)
+                    retainedFileCountLimit: 7)*/
             .CreateLogger();
 
             builder.Host.UseSerilog();
 
 
-            builder.Services.AddOpenTelemetry()
+/*            builder.Services.AddOpenTelemetry()
                 .WithTracing(tracerProviderBuilder =>
                 {
                     tracerProviderBuilder
@@ -50,23 +50,23 @@ namespace GatewayAPI
                             opt.Endpoint = new Uri("http://localhost:14268/api/traces");
                             opt.Protocol = OpenTelemetry.Exporter.JaegerExportProtocol.HttpBinaryThrift;
                         });
-                });
+                });*/
 
 
-            builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>(provider =>
+/*            builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>(provider =>
             {
                 return new RabbitMqService(queue: "CoursesQueue");
-            });
+            });*/
             {
-                builder.Services.AddSingleton<AuthorizationServiceClient>(provider =>
+                builder.Services.AddSingleton<IdentityServiceClient>(provider =>
                 {
                     var serviceUrl = "http://localhost:5125";
-                    return new AuthorizationServiceClient(serviceUrl);
+                    return new IdentityServiceClient(serviceUrl);
                 });
                 builder.Services.AddSingleton<CourseServiceClient>(provider =>
                 {
                     var serviceUrl = "http://localhost:5057";
-                    return new CourseServiceClient(serviceUrl, provider.GetRequiredService<IRabbitMqService>());
+                    return new CourseServiceClient(serviceUrl/*, provider.GetRequiredService<IRabbitMqService>()*/);
                 });
                 builder.Services.AddSingleton<AccessServiceClient>(provider =>
                 {

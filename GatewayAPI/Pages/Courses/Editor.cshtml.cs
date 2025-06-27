@@ -1,4 +1,5 @@
 using GatewayAPI.Grpc;
+using GatewayAPI.Models.DTO;
 using GatewayAPI.PageFilters;
 using GatewayAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,8 +12,9 @@ using static GatewayAPI.Pages.Courses.CourseCreateModel;
 
 namespace GatewayAPI.Pages.Courses
 {
-    //[Authorize]
-    //[RedirectByAccess("id", "/index")]
+    [Authorize]
+    [RedirectByAccess("id", "/index")]
+    [BindProperties]
     public class EditorModel : PageModel
     {
         private readonly ILogger<EditorModel> _logger;
@@ -24,22 +26,15 @@ namespace GatewayAPI.Pages.Courses
             _courseClient = courseClient;
         }
 
-        [BindProperty]
         public Course CurrentCourse { get; set; }
-        [BindProperty]
-        public DTOCourse _CurrentCourse { get; set; }
-        [BindProperty]
-        public CourseItem CurrentCourseItem { get; set; }
-        [BindProperty]
-        public DTOCourseItem NewCourseItem { get; set; } = new DTOCourseItem();
-        [BindProperty]
-        public List<Content> Contents { get; set; } = new List<Content>();
-        [BindProperty]
         public List<CourseItem> CourseItems { get; set; } = new List<CourseItem>();
+        public List<Content> Contents { get; set; } = new List<Content>();
+        public CourseItem CurrentCourseItem { get; set; }
+       
+        
+        public CourseItemDto? NewCourseItem { get; set; } = new CourseItemDto();
 
-        //Брокер сообщений RabbitMQ, логирование Serilog, Jaeger, тесты Unit test 
-        //Какой-то ElasticSearch
-        public async Task<IActionResult> OnGet(string id, string? idItem)
+        public async Task<IActionResult> OnGet(string id, string? idItem = "")
         {
             try
             {
@@ -66,10 +61,10 @@ namespace GatewayAPI.Pages.Courses
                         Contents.Add(await _courseClient.GetContentAsync(CurrentCourseItem.ContentsIds[i]));
                     }
                     Contents = Contents.OrderBy(x => x.Order).ToList();
-                    if(Contents.Count == 0)
+/*                    if(Contents.Count == 0)
                     {
                         Contents.Add(await _courseClient.CreateContentAsync(CurrentCourseItem.Id, "Base", "Текст..."));
-                    }
+                    }*/
                     
                 }
 
@@ -82,19 +77,14 @@ namespace GatewayAPI.Pages.Courses
             return Page();
         }
 
-        public class SaveDataRequest
-        {
-            public Content Content { get; set; }
-            public CourseItem CourseItem { get; set; }
-        }
 
-        public async Task<IActionResult> OnPostSaveDataAsync([FromBody] SaveDataRequest saveData)
+        public async Task<IActionResult> OnPostSaveDataAsync([FromBody] CourseItem_ContentDto saveData)
         {
             try
             {
                 if (string.IsNullOrEmpty(saveData.Content.Id))
                 {
-                    var list = new List<Content>
+                    var list = new List<ContentDto>
                     {
                         saveData.Content
                     };
@@ -108,7 +98,7 @@ namespace GatewayAPI.Pages.Courses
                 }
                 return new OkResult();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new BadRequestResult();
                 throw;
@@ -118,14 +108,14 @@ namespace GatewayAPI.Pages.Courses
 
 
 
-        public async Task<IActionResult> OnPostCreateCourseItemAsync(string id, int order)
+        public async Task<IActionResult> OnPostCreateCourseItemAsync(string id, int order, string newCourseItemTitle, string newCourseItemType)
         {
             try
             {
                 CourseItem newItem = await _courseClient.CreateCourseItemAsync(id,
                     string.Empty,
-                    string.IsNullOrWhiteSpace(NewCourseItem.Type) ? "Type" : NewCourseItem.Type,
-                    string.IsNullOrWhiteSpace(NewCourseItem.Title) ? "Title" : NewCourseItem.Title,
+                    newCourseItemType,
+                    newCourseItemTitle,
                     order);
 
                 List<Content> contents = new List<Content>();
@@ -163,14 +153,20 @@ namespace GatewayAPI.Pages.Courses
             }
 
         }
-        public class Entity
+        public async Task<IActionResult> OnPostDeleteCourseItemAsync([FromHeader] string itemId)
         {
-            public string Id { get; set; }
-        }
-        public async Task<IActionResult> OnPostDeleteCourseItemAsync([FromBody] Entity entity)
-        {
-            await _courseClient.DeleteCourseItemAsync(entity.Id);
-            return Redirect($"/courses/editor/{CurrentCourse.Id}");
+            try
+            {
+                await _courseClient.DeleteCourseItemAsync(itemId);
+                return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+            }
+            catch (Exception)
+            {
+
+                return new BadRequestResult();
+                throw;
+            }
+
         }
 
         public async Task<IActionResult> OnPostCreateContentsAsync([FromBody]List<Content> contents)
@@ -178,11 +174,5 @@ namespace GatewayAPI.Pages.Courses
             await _courseClient.CreateContentsAsync(contents);
             return new OkResult();
         }
-    }
-
-    public class DTOCourseItem
-    {
-        public string Title { get; set; }
-        public string Type { get; set; }
     }
 }

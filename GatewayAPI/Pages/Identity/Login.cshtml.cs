@@ -15,9 +15,9 @@ namespace GatewayAPI.Pages.Identity
     public class LoginModel : PageModel
     {
         private readonly ILogger<LoginModel> _logger;
-        public AuthorizationServiceClient _authClient;
+        public IdentityServiceClient _authClient;
 
-        public LoginModel(ILogger<LoginModel> logger, AuthorizationServiceClient authClient)
+        public LoginModel(ILogger<LoginModel> logger, IdentityServiceClient authClient)
         {
             _logger = logger;
             _authClient = authClient;

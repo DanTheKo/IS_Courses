@@ -9,6 +9,7 @@ namespace GatewayAPI.Pages.Courses
 {
     [Authorize]
     [RedirectByAccess("id", "/index")]
+    [BindProperties]
     public class ViewModel : PageModel
     {
         private readonly ILogger<ViewModel> _logger;
@@ -20,22 +21,12 @@ namespace GatewayAPI.Pages.Courses
             _courseClient = courseClient;
         }
 
-        [BindProperty]
         public Course CurrentCourse { get; set; }
-        [BindProperty]
         public CourseItem CurrentCourseItem { get; set; }
-        [BindProperty]
         public List<Content> Contents { get; set; } = new List<Content>();
-        [BindProperty]
-        public List<Content> NewContents { get; set; } = new List<Content>();
-        [BindProperty]
         public List<CourseItem> CourseItems { get; set; } = new List<CourseItem>();
 
-
-
-        //Брокер сообщений RabbitMQ, логирование Garfana?, Jaeger, тесты Unit test 
-        //Какой-то ElasticSearch
-        public async Task<IActionResult> OnGet(string id, string idItem)
+        public async Task<IActionResult> OnGet(string id, string? idItem = "")
         {
             try
             {

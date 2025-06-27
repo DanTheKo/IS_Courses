@@ -7,18 +7,18 @@ using GatewayAPI.Grpc;
 
 namespace GatewayAPI.Services
 {
-    public class AuthorizationServiceClient : IDisposable
+    public class IdentityServiceClient : IDisposable
     {
         private readonly GrpcChannel _channel;
-        private readonly Authorization.AuthorizationClient _client;
+        private readonly Identities.IdentitiesClient _client;
 
-        public AuthorizationServiceClient(string serviceUrl)
+        public IdentityServiceClient(string serviceUrl)
         {
             if (string.IsNullOrWhiteSpace(serviceUrl))
                 throw new ArgumentException("Service URL cannot be null or empty", nameof(serviceUrl));
 
             _channel = GrpcChannel.ForAddress(serviceUrl);
-            _client = new Authorization.AuthorizationClient(_channel);
+            _client = new Identities.IdentitiesClient(_channel);
         }
 
         public async Task<RegistrationResponse> RegisterAsync(

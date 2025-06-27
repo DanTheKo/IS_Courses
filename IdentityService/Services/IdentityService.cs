@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.Services
 {
-    public class IdentityService : Authorization.AuthorizationBase
+    public class IdentityService : Identities.IdentitiesBase
     {
         public ILogger<IdentityService> _logger;
         public IdentityRepository _identityRepository;

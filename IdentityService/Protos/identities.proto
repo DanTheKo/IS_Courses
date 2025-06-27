@@ -1,8 +1,8 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "GatewayAPI.Grpc";
+option csharp_namespace = "IdentityService";
 
-service Authorization {
+service Identities {
   rpc Register (RegistrationRequest) returns (RegistrationResponse);
   rpc Authenticate (AuthenticationRequest) returns (AuthenticationResponse);
   rpc ValidateToken (TokenValidationRequest) returns (TokenValidationResponse);

@@ -10,9 +10,9 @@ namespace GatewayAPI.Pages.Identity
     [RedirectAuthenticatedUsers]
     public class RegisterModel : PageModel
     {
-        private readonly AuthorizationServiceClient _authClient;
+        private readonly IdentityServiceClient _authClient;
         private readonly ILogger<RegisterModel> _logger;
-        public RegisterModel(ILogger<RegisterModel> logger, AuthorizationServiceClient authClient)
+        public RegisterModel(ILogger<RegisterModel> logger, IdentityServiceClient authClient)
         {
             _logger = logger;
             _authClient = authClient;

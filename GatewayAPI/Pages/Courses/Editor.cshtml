@@ -14,107 +14,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
     <link rel="stylesheet" href="~/node_modules/easymde/dist/easymde.min.css">
     <link rel="stylesheet" href="~/css/easymde.css">
-
-
 </head>
 
 @section Scripts {
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="~/node_modules/easymde/dist/easymde.min.js"></script>
-    <script>
-                function showMessage(message) {
-            const msgElement = document.createElement('div');
-            msgElement.textContent = message;
-            msgElement.style.position = 'fixed';
-            msgElement.style.bottom = '20px';
-            msgElement.style.right = '20px';
-            msgElement.style.padding = '15px 25px';
-            msgElement.style.backgroundColor = '#fff';
-            msgElement.style.color = 'black';
-            msgElement.style.borderRadius = '5px';
-            msgElement.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
-            msgElement.style.zIndex = '1000';
-            msgElement.style.animation = 'fadein 0.5s, fadeout 0.5s 2.5s forwards';
-
-            document.body.appendChild(msgElement);
-
-            setTimeout(() => {
-                msgElement.remove();
-            }, 3000);
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-            const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
-
-
-            const element = document.getElementById("easymde");
-
-            const editor = new EasyMDE({
-            element: element,
-            spellChecker: false
-            });
-            //const editor = new EasyMDE(element);
-            if (content) {
-            editor.value(content);
-            }
-
-            const toolbar = document.querySelector('.editor-toolbar');
-            const newParent = document.querySelector('.sidebar.right-sidebar');
-            const referenceElement = document.getElementById('saveAllBtn');
-            newParent.insertBefore(toolbar, referenceElement);
-
-            document.getElementById('saveAllBtn').addEventListener('click', async function () {
-                const courseItemId = document.getElementById('courseItemId').value;
-                const courseItemTitle = document.getElementById('courseItemTitle').value;
-                const courseItemType = document.getElementById('courseItemType').value;
-
-                const contentId = document.getElementById('mainContentId').value;
-                const contentType = "Base";
-                const contentData = editor.value();
-
-
-
-                const content = {
-                Id: contentId,
-                Type: contentType,
-                Data: contentData,
-                Order: 0,
-                CourseItemId: courseItemId
-                };
-                const courseItem = {
-                Id: courseItemId,
-                Title: courseItemTitle,
-                Type: courseItemType
-                }
-
-                const data = {
-                Content: content,
-                CourseItem: courseItem
-                };
-
-                const response = await fetch('?handler=SaveData', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: JSON.stringify(data)
-                });
-                console.log('Raw response:', response);
-                if(response.ok){
-                   showMessage('Данные успешно сохранены!');
-                }else{
-                   showMessage('Ошибка! Данные не сохранены!');
-                }
-
-
-            });
-
-        });
-    </script>
-
     <script type="text/javascript" src="/js/editor.js"></script>
-
+    <script>
+        const content = @Html.Raw(Json.Serialize(Model.Contents != null && Model.Contents.Count > 0 ? Model.Contents.First().Data : ""));
+        setContent(content);
+    </script>
 
 }
 
@@ -163,10 +73,10 @@
                 <input hidden id="courseItemId" value="@Model.CurrentCourseItem.Id" />
                 <input hidden id="mainContentId" value="@(Model.Contents.Count > 0 ? Model.Contents.First().Id : "")" />
                 <div class="form-group">
-                    <input id="courseItemTitle" asp-for="CurrentCourseItem.Title" class="borderless-input large form-control" placeholder="Название модуля" />
+                    <input required id="courseItemTitle" asp-for="CurrentCourseItem.Title" class="borderless-input large form-control" placeholder="Название модуля" />
                 </div>
                 <div class="form-group">
-                    <input id="courseItemType" asp-for="CurrentCourseItem.Type" list="itemsList" class="borderless-input medium form-control" placeholder="Тип модуля" />
+                    <input required id="courseItemType" asp-for="CurrentCourseItem.Type" list="itemsList" class="borderless-input medium form-control" placeholder="Тип модуля" />
                     <datalist id="itemsList">
                         <option value="Лекция">Лекция</option>
                         <option value="Практика">Практика</option>
@@ -266,16 +176,16 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Название модуля</label>
-                        <input id="newCourseItemTitle" asp-for="NewCourseItem.Title" class="form-control" />
+                        <input required id="newCourseItemTitle" name="newCourseItemTitle" asp-for="NewCourseItem.Title" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>Тип модуля</label>
-                        <input id="newCourseItemType" asp-for="NewCourseItem.Type"  list="itemsList" class="form-control" />
+                        <input required id="newCourseItemType" name="newCourseItemType" asp-for="NewCourseItem.Type" list="itemsList" class="form-control" />
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button class="btn btn-primary" data-bs-dismiss="modal">Создать</button>
+                    <button class="btn btn-primary">Создать</button>
                 </div>
             </form>
         </div>
@@ -286,7 +196,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="display-6">Изенение курса</h4>
+                <h4 class="display-6">Изменение курса</h4>
             </div>
 
             <form id="moduleForm" method="post"
@@ -295,11 +205,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Название курса</label>
-                        <input id="currentCourseTitle" name="currentCourseTitle" asp-for="_CurrentCourse.Title" value="@Model.CurrentCourse.Title" class="form-control" />
+                        <input required id="currentCourseTitle" name="currentCourseTitle" asp-for="CurrentCourse.Title" value="@Model.CurrentCourse.Title" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label>Тип курса</label>
-                        <input id="currentCourseDescription" name="currentCourseDescription" asp-for="_CurrentCourse.Description" value="@Model.CurrentCourse.Description" class="form-control" />
+                        <label>Описание курса</label>
+                        <textarea rows="3" required id="currentCourseDescription" name="currentCourseDescription" class="form-control">@Model.CurrentCourse.Description</textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
