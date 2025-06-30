@@ -46,7 +46,6 @@ namespace GatewayAPI.Pages.Courses
                     if (!string.IsNullOrEmpty(idItem)) { CurrentCourseItem = await _courseClient.GetCourseItemAsync(idItem); }
 
                     if (CurrentCourseItem == null || !CourseItems.Contains(CurrentCourseItem)) { CurrentCourseItem = CourseItems.FirstOrDefault(); }
-                    Console.WriteLine(CurrentCourseItem.ContentsIds);
 
                     Contents = new List<Content>();
                     for (int i = 0; i < CurrentCourseItem.ContentsIds.Count; i++)

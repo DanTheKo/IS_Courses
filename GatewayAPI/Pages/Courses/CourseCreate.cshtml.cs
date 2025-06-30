@@ -33,10 +33,6 @@ namespace GatewayAPI.Pages.Courses
 
         public async Task<IActionResult> OnPostAsync(string title, string description)
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
 
             var responce = await _courseClient.CreateCourseAsync(title, description);
 

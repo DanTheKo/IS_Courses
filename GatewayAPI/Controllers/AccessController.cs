@@ -17,119 +17,165 @@ namespace GatewayAPI.Controllers
         }
 
         /// <summary>
-        /// Creates a new access record
+        /// Создает новую запись доступа
         /// </summary>
-        /// <param name="identityId">The identity ID</param>
-        /// <param name="resourceId">The resource ID</param>
-        /// <param name="accessData">The access data in JSON format</param>
-        /// <returns>The created access record</returns>
+        /// <param name="request">Данные для создания доступа</param>
+        /// <returns>Созданная запись доступа</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateAccess([FromQuery] string identityId, [FromQuery] string resourceId, [FromBody] string accessData)
+        public async Task<IActionResult> CreateAccess([FromBody] CreateAccessRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(identityId))
+                if (request == null)
+                    return BadRequest("Request body is required");
+
+                if (string.IsNullOrWhiteSpace(request.IdentityId))
                     return BadRequest("Identity ID is required");
 
-                if (string.IsNullOrWhiteSpace(resourceId))
+                if (string.IsNullOrWhiteSpace(request.ResourceId))
                     return BadRequest("Resource ID is required");
 
-                if (string.IsNullOrWhiteSpace(accessData))
+                if (string.IsNullOrWhiteSpace(request.AccessData))
                     return BadRequest("Access data is required");
 
-                var response = await _accessServiceClient.CreateAccessAsync(identityId, resourceId, accessData);
+                var response = await _accessServiceClient.CreateAccessAsync(
+                    request.IdentityId,
+                    request.ResourceId,
+                    request.AccessData);
+
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating access");
-                return StatusCode(500, "An error occurred while creating access");
+                _logger.LogError(ex, "Ошибка при создании доступа");
+                return StatusCode(500, "Произошла ошибка при создании доступа");
             }
         }
 
         /// <summary>
-        /// Updates an existing access record
+        /// Обновляет существующую запись доступа
         /// </summary>
-        /// <param name="identityId">The identity ID</param>
-        /// <param name="resourceId">The resource ID</param>
-        /// <param name="accessData">The updated access data in JSON format</param>
-        /// <returns>The updated access record</returns>
+        /// <param name="request">Данные для обновления доступа</param>
+        /// <returns>Обновленная запись доступа</returns>
         [HttpPut]
-        public async Task<IActionResult> UpdateAccess([FromQuery] string identityId, [FromQuery] string resourceId, [FromBody] string accessData)
+        public async Task<IActionResult> UpdateAccess([FromBody] UpdateAccessRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(identityId))
+                if (request == null)
+                    return BadRequest("Request body is required");
+
+                if (string.IsNullOrWhiteSpace(request.IdentityId))
                     return BadRequest("Identity ID is required");
 
-                if (string.IsNullOrWhiteSpace(resourceId))
+                if (string.IsNullOrWhiteSpace(request.ResourceId))
                     return BadRequest("Resource ID is required");
 
-                if (string.IsNullOrWhiteSpace(accessData))
+                if (string.IsNullOrWhiteSpace(request.AccessData))
                     return BadRequest("Access data is required");
 
-                var response = await _accessServiceClient.UpdateAccessAsync(identityId, resourceId, accessData);
+                var response = await _accessServiceClient.UpdateAccessAsync(
+                    request.IdentityId,
+                    request.ResourceId,
+                    request.AccessData);
+
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating access");
-                return StatusCode(500, "An error occurred while updating access");
+                _logger.LogError(ex, "Ошибка при обновлении доступа");
+                return StatusCode(500, "Произошла ошибка при обновлении доступа");
             }
         }
 
         /// <summary>
-        /// Gets an access record by identity and resource IDs
+        /// Получает запись доступа по ID идентификатора и ресурса
         /// </summary>
-        /// <param name="identityId">The identity ID</param>
-        /// <param name="resourceId">The resource ID</param>
-        /// <returns>The access record</returns>
-        [HttpGet]
-        public async Task<IActionResult> GetAccess([FromQuery] string identityId, [FromQuery] string resourceId)
+        /// <param name="request">Данные для поиска доступа</param>
+        /// <returns>Запись доступа</returns>
+        [HttpGet("get")]
+        public async Task<IActionResult> GetAccess([FromBody] GetAccessRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(identityId))
+                if (request == null)
+                    return BadRequest("Request body is required");
+
+                if (string.IsNullOrWhiteSpace(request.IdentityId))
                     return BadRequest("Identity ID is required");
 
-                if (string.IsNullOrWhiteSpace(resourceId))
+                if (string.IsNullOrWhiteSpace(request.ResourceId))
                     return BadRequest("Resource ID is required");
 
-                var response = await _accessServiceClient.GetAccessAsync(identityId, resourceId);
+                var response = await _accessServiceClient.GetAccessAsync(
+                    request.IdentityId,
+                    request.ResourceId);
+
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting access");
-                return StatusCode(500, "An error occurred while getting access");
+                _logger.LogError(ex, "Ошибка при получении доступа");
+                return StatusCode(500, "Произошла ошибка при получении доступа");
             }
         }
 
         /// <summary>
-        /// Deletes an access record by identity and resource IDs
+        /// Удаляет запись доступа по ID идентификатора и ресурса
         /// </summary>
-        /// <param name="identityId">The identity ID</param>
-        /// <param name="resourceId">The resource ID</param>
-        /// <returns>Empty response if successful</returns>
+        /// <param name="request">Данные для удаления доступа</param>
+        /// <returns>Пустой ответ при успешном удалении</returns>
         [HttpDelete]
-        public async Task<IActionResult> DeleteAccess([FromQuery] string identityId, [FromQuery] string resourceId)
+        public async Task<IActionResult> DeleteAccess([FromBody] DeleteAccessRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(identityId))
+                if (request == null)
+                    return BadRequest("Request body is required");
+
+                if (string.IsNullOrWhiteSpace(request.IdentityId))
                     return BadRequest("Identity ID is required");
 
-                if (string.IsNullOrWhiteSpace(resourceId))
+                if (string.IsNullOrWhiteSpace(request.ResourceId))
                     return BadRequest("Resource ID is required");
 
-                var response = await _accessServiceClient.DeleteAccessAsync(identityId, resourceId);
+                var response = await _accessServiceClient.DeleteAccessAsync(
+                    request.IdentityId,
+                    request.ResourceId);
+
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting access");
-                return StatusCode(500, "An error occurred while deleting access");
+                _logger.LogError(ex, "Ошибка при удалении доступа");
+                return StatusCode(500, "Произошла ошибка при удалении доступа");
             }
+        }
+
+        public class CreateAccessRequest
+        {
+            public string IdentityId { get; set; }
+            public string ResourceId { get; set; }
+            public string AccessData { get; set; }
+        }
+
+        public class UpdateAccessRequest
+        {
+            public string IdentityId { get; set; }
+            public string ResourceId { get; set; }
+            public string AccessData { get; set; }
+        }
+
+        public class GetAccessRequest
+        {
+            public string IdentityId { get; set; }
+            public string ResourceId { get; set; }
+        }
+
+        public class DeleteAccessRequest
+        {
+            public string IdentityId { get; set; }
+            public string ResourceId { get; set; }
         }
     }
 }

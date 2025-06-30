@@ -1,21 +1,24 @@
-﻿using CSharpFunctionalExtensions;
+﻿
+using CourseService.Models.Quizes;
+using CSharpFunctionalExtensions;
 
 namespace CourseService.Models
 {
     public class CourseItem : Entity<Guid>
     {
+        public Guid CourseId { get; set; }
+        public Course Course { get; set; }
         public Guid? ParentId { get; set; }
         public CourseItem? Parent { get; set; }
 
         public string Title { get; set; }
         public string Type { get; set; }
+        public int Order { get; set; }
 
         public ICollection<CourseItem> Children { get; set; } = new List<CourseItem>();
         public ICollection<Content> Contents { get; set; } = new List<Content>();
-        public int Order { get; set; }
+        public ICollection<Quiz> Quizes { get; set; } = new List<Quiz>();
 
-        public Guid CourseId { get; set; }
-        public Course Course { get; set; }
 
         public CourseItem(Guid id, CourseItem? parent, string title, string type, List<CourseItem> children, List<Content> contents, int order, Course course)
         {

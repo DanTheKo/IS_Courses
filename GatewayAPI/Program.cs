@@ -6,6 +6,8 @@ using Serilog;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
+using AutoMapper;
+using GatewayAPI.Grpc;
 
 namespace GatewayAPI
 {
@@ -68,6 +70,11 @@ namespace GatewayAPI
                     var serviceUrl = "http://localhost:5057";
                     return new CourseServiceClient(serviceUrl/*, provider.GetRequiredService<IRabbitMqService>()*/);
                 });
+                builder.Services.AddSingleton<QuizServiceClient>(provider =>
+                {
+                    var serviceUrl = "http://localhost:5057";
+                    return new QuizServiceClient(serviceUrl/*, provider.GetRequiredService<IRabbitMqService>()*/);
+                });
                 builder.Services.AddSingleton<AccessServiceClient>(provider =>
                 {
                     var serviceUrl = "http://localhost:5122";
@@ -86,7 +93,6 @@ namespace GatewayAPI
                     app.UseHsts();
                 }
 
-
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
 
@@ -101,5 +107,6 @@ namespace GatewayAPI
                 app.Run();
             }
         }
+
     }
 }

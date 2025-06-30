@@ -19,7 +19,7 @@ namespace UnitTests
             var invalidUrl = "";
             var rabbitMq = _rabbitMqMock.Object;
 
-            Action act = () => new CourseServiceClient(invalidUrl, rabbitMq);
+            Action act = () => new CourseServiceClient(invalidUrl);
             act.Should().Throw<ArgumentException>()
                 .WithMessage("Service URL cannot be null or empty*")
                 .And.ParamName.Should().Be("serviceUrl");
@@ -35,7 +35,7 @@ namespace UnitTests
                 .Returns(CreateAsyncUnaryCall<Course>(expectedCourse)); 
 
             var channel = GrpcChannel.ForAddress("http://localhost");
-            var service = new CourseServiceClient("http://localhost", _rabbitMqMock.Object)
+            var service = new CourseServiceClient("http://localhost")
             {
                 _client = grpcClientMock.Object
             };
@@ -63,7 +63,7 @@ namespace UnitTests
                     () => new Metadata(),
                     () => { }));
 
-            var service = new CourseServiceClient("http://localhost", _rabbitMqMock.Object)
+            var service = new CourseServiceClient("http://localhost")
             {
                 _client = grpcClientMock.Object
             };
@@ -86,7 +86,7 @@ namespace UnitTests
                 .Setup(x => x.GetCourseAsync(It.IsAny<GetByIdRequest>(), null, null, CancellationToken.None))
                 .Returns(CreateAsyncUnaryCall(expectedCourse));
 
-            var service = new CourseServiceClient("http://localhost", _rabbitMqMock.Object)
+            var service = new CourseServiceClient("http://localhost")
             {
                 _client = grpcClientMock.Object
             };
@@ -99,7 +99,7 @@ namespace UnitTests
         public async Task Dispose_ShouldDisposeGrpcChannel()
         {
             var channel = GrpcChannel.ForAddress("http://localhost");
-            var service = new CourseServiceClient("http://localhost", _rabbitMqMock.Object)
+            var service = new CourseServiceClient("http://localhost")
             {
                 _channel = channel
             };

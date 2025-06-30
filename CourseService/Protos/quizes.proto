@@ -1,0 +1,158 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "CourseService.Grpc";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service QuizCrudService {
+  rpc Create (CreateRequest) returns (EntityResponse);
+  rpc Read (ReadRequest) returns (EntityResponse);
+  rpc Update (UpdateRequest) returns (EntityResponse);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+  rpc List (ListRequest) returns (ListResponse);
+}
+
+service QuizResponseCrudService {
+  rpc Create (CreateRequest) returns (EntityResponse);
+  rpc Read (ReadRequest) returns (EntityResponse);
+  rpc Update (UpdateRequest) returns (EntityResponse);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+  rpc List (ListRequest) returns (ListResponse);
+}
+
+service QuestionCrudService {
+  rpc Create (CreateRequest) returns (EntityResponse);
+  rpc Read (ReadRequest) returns (EntityResponse);
+  rpc Update (UpdateRequest) returns (EntityResponse);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+  rpc List (ListRequest) returns (ListResponse);
+}
+
+service QuestionAnswerCrudService {
+  rpc Create (CreateRequest) returns (EntityResponse);
+  rpc Read (ReadRequest) returns (EntityResponse);
+  rpc Update (UpdateRequest) returns (EntityResponse);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+  rpc List (ListRequest) returns (ListResponse);
+}
+service FeedbackCrudService {
+  rpc Create (CreateRequest) returns (EntityResponse);
+  rpc Read (ReadRequest) returns (EntityResponse);
+  rpc Update (UpdateRequest) returns (EntityResponse);
+  rpc Delete (DeleteRequest) returns (google.protobuf.Empty);
+  rpc List (ListRequest) returns (ListResponse);
+}
+
+message EntityResponse {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+}
+
+message CreateRequest {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+}
+
+message ReadRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  string id = 2;  // GUID as string
+  optional bool include_related = 3;  // Whether to include related entities
+}
+
+message UpdateRequest {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+  // Fields to update (if partial update is supported)
+  google.protobuf.StringValue update_mask = 6;
+}
+
+message DeleteRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  string id = 2;  // GUID as string
+}
+
+message ListRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  optional string filter = 2;  // Optional filter expression
+  optional int32 page_size = 3;
+  optional string page_token = 4;
+  optional string order_by = 5;
+}
+
+message ListResponse {
+  repeated EntityResponse entities = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+// Entity definitions
+message Question {
+  string id = 1;  // GUID as string
+  string quiz_id = 2;
+  string question_type = 3;
+  string question_text = 4;
+  string options = 5;
+  string correct_answer = 6;
+  int32 max_score = 7;
+  int32 order = 8;
+  // Optional related entities
+  optional Quiz quiz = 9;
+}
+
+message Feedback {
+  string id = 1;
+  string question_answer_id = 2;
+  string examiner_id = 3;
+  string comment = 4;
+  int32 rating = 5;
+  // Optional related entities
+  optional QuestionAnswer question_answer = 6;
+}
+
+message QuestionAnswer {
+  string id = 1;
+  string question_id = 2;
+  string quiz_response_id = 3;
+  string answer_text = 4;
+  string selected_options = 5;
+  // Optional related entities
+  optional Question question = 6;
+  optional QuizResponse quiz_response = 7;
+  repeated Feedback feedbacks = 8;
+}
+
+message Quiz {
+  string id = 1;
+  string course_item_id = 2;
+  string title = 3;
+  string type = 4;
+  string description = 5;
+  // Optional related entities
+  repeated Question questions = 6;
+  repeated QuizResponse responses = 7;
+}
+
+message QuizResponse {
+  string id = 1;
+  string quiz_id = 2;
+  string identity_id = 3;
+  // Optional related entities
+  optional Quiz quiz = 4;
+  repeated QuestionAnswer answers = 5;
+}
