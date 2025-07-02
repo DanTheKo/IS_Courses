@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace CourseService.Repositories.Quizes
+namespace CourseService.Repositories.Quizzes
 {
     public interface IEntityRepository<TEntity, TId> where TEntity : Entity<Guid>
     {

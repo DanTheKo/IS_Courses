@@ -101,6 +101,16 @@ message ListResponse {
   int32 total_size = 3;
 }
 
+message Feedback {
+  string id = 1;
+  string question_answer_id = 2;
+  string examiner_id = 3;
+  string comment = 4;
+  int32 rating = 5;
+  // Optional related entities
+  optional QuestionAnswer question_answer = 6;
+}
+
 // Entity definitions
 message Question {
   string id = 1;  // GUID as string
@@ -113,16 +123,7 @@ message Question {
   int32 order = 8;
   // Optional related entities
   optional Quiz quiz = 9;
-}
-
-message Feedback {
-  string id = 1;
-  string question_answer_id = 2;
-  string examiner_id = 3;
-  string comment = 4;
-  int32 rating = 5;
-  // Optional related entities
-  optional QuestionAnswer question_answer = 6;
+  repeated string question_answers_ids = 10;
 }
 
 message QuestionAnswer {
@@ -134,7 +135,7 @@ message QuestionAnswer {
   // Optional related entities
   optional Question question = 6;
   optional QuizResponse quiz_response = 7;
-  repeated Feedback feedbacks = 8;
+  repeated string feedbacks_ids = 8;
 }
 
 message Quiz {
@@ -144,8 +145,8 @@ message Quiz {
   string type = 4;
   string description = 5;
   // Optional related entities
-  repeated Question questions = 6;
-  repeated QuizResponse responses = 7;
+  repeated string questions_ids = 6;
+  repeated string quiz_responses_ids = 7;
 }
 
 message QuizResponse {
@@ -154,5 +155,5 @@ message QuizResponse {
   string identity_id = 3;
   // Optional related entities
   optional Quiz quiz = 4;
-  repeated QuestionAnswer answers = 5;
+  repeated string question_answers_ids = 5;
 }

@@ -3,7 +3,7 @@ using Grpc.Core;
 using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using global::CourseService.Grpc;
-using global::CourseService.Repositories.Quizes;
+using global::CourseService.Repositories.Quizzes;
 using Google.Protobuf;
 using CSharpFunctionalExtensions;
 

@@ -1,77 +1,29 @@
-﻿using FluentNHibernate.Automapping;
+﻿
 using Grpc.Core;
-using AutoMapper;
-using Google.Protobuf.WellKnownTypes;
-using global::CourseService.Grpc;
-using global::CourseService.Repositories.Quizes;
-using Google.Protobuf;
-using CSharpFunctionalExtensions;
-using CourseService.Extensions;
+using CourseService.Grpc;
+
+using CourseService.Repositories.Quizzes;
+using CourseService.Data;
 
 namespace CourseService.Services
 {
 
-    public class QuestionService<TEntity, TId, TProtoEntity> : QuestionCrudService.QuestionCrudServiceBase
-        where TEntity : Entity<Guid>
-        where TProtoEntity : class, new()
+    public class QuestionService : QuestionCrudService.QuestionCrudServiceBase
     {
-        private readonly IEntityRepository<TEntity, TId> _repository;
-        private readonly IMapper _mapper;
-        private readonly string _entityTypeName;
+        private readonly QuestionRepository _repository;
 
-        public QuestionService(
-            IEntityRepository<TEntity, TId> repository,
-            IMapper mapper)
+        public QuestionService(CourseDbContext dbContext)
         {
-            _repository = repository;
-            _mapper = mapper;
-            _entityTypeName = typeof(TEntity).Name.ToLower();
-        }
-
-
-        private TEntity GetEntityFromRequest(IMessage request)
-        {
-            var fieldDescriptor = request.Descriptor.FindFieldByName( CamelToSnakeConverter.ConvertToSnakeCase(typeof(TEntity).Name));
-            if (fieldDescriptor == null)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument,
-                    $"Request does not contain {_entityTypeName} entity"));
-            }
-
-            var protoEntity = (TProtoEntity)fieldDescriptor.Accessor.GetValue(request);
-            return _mapper.Map<TEntity>(protoEntity);
-        }
-
-
-        private EntityResponse CreateEntityResponse(TEntity entity)
-        {
-            var response = new EntityResponse();
-            var protoEntity = _mapper.Map<TProtoEntity>(entity);
-
-            // Используем reflection для установки соответствующего поля
-            var property = typeof(EntityResponse)
-                .GetProperties()
-                .FirstOrDefault(p => p.Name.Equals(_entityTypeName, StringComparison.OrdinalIgnoreCase));
-
-            if (property != null)
-            {
-                property.SetValue(response, protoEntity);
-            }
-            else
-            {
-                throw new InvalidOperationException($"No matching property found in EntityResponse for {_entityTypeName}");
-            }
-
-            return response;
+            _repository = new QuestionRepository(dbContext);
         }
 
         public override async Task<EntityResponse> Create(CreateRequest request, ServerCallContext context)
         {
             try
             {
-                var entity = GetEntityFromRequest(request);
+                var entity = ToModel(request.Question);
                 await _repository.AddAsync(entity);
-                return CreateEntityResponse(entity);
+                return new EntityResponse() { Question = ToProto(entity) };
             }
             catch (Exception ex)
             {
@@ -81,17 +33,11 @@ namespace CourseService.Services
 
         public override async Task<EntityResponse> Read(ReadRequest request, ServerCallContext context)
         {
-            if (request.EntityType != _entityTypeName)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument,
-                    $"Invalid entity type. Expected: {_entityTypeName}"));
-            }
-
             try
             {
-                var id = ParseId(request.Id);
+                var id = Guid.Parse(request.Id);
                 var entity = await _repository.GetByIdAsync(id);
-                return CreateEntityResponse(entity);
+                return new EntityResponse() { Question = ToProto(entity) };
             }
             catch (EntityNotFoundException ex)
             {
@@ -104,9 +50,9 @@ namespace CourseService.Services
         {
             try
             {
-                var entity = GetEntityFromRequest(request);
-                await _repository.UpdateAsync(entity);
-                return CreateEntityResponse(entity);
+                var entity = request.Question;
+                await _repository.UpdateAsync(ToModel(entity));
+                return new EntityResponse() { Question = entity };
             }
             catch (Exception ex)
             {
@@ -117,15 +63,10 @@ namespace CourseService.Services
 
         public override async Task<Google.Protobuf.WellKnownTypes.Empty> Delete(DeleteRequest request, ServerCallContext context)
         {
-            if (request.EntityType != _entityTypeName)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument,
-                    $"Invalid entity type. Expected: {_entityTypeName}"));
-            }
 
             try
             {
-                var id = ParseId(request.Id);
+                var id = Guid.Parse(request.Id);
                 await _repository.DeleteAsync(id);
                 return new Google.Protobuf.WellKnownTypes.Empty();
             }
@@ -135,14 +76,8 @@ namespace CourseService.Services
             }
         }
 
-
         public override async Task<ListResponse> List(ListRequest request, ServerCallContext context)
         {
-            if (request.EntityType != _entityTypeName)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument,
-                    $"Invalid entity type. Expected: {_entityTypeName}"));
-            }
 
             try
             {
@@ -151,7 +86,7 @@ namespace CourseService.Services
 
                 foreach (var entity in entities)
                 {
-                    response.Entities.Add(CreateEntityResponse(entity));
+                    response.Entities.Add(new EntityResponse() { Question = ToProto(entity) });
                 }
 
                 return response;
@@ -162,14 +97,27 @@ namespace CourseService.Services
             }
         }
 
-
-        private TId ParseId(string id)
+        private Question ToProto(Models.Quizzes.Question question)
         {
-            if (typeof(TId) == typeof(Guid))
+            Question protoQuestion = new Question()
             {
-                return (TId)(object)Guid.Parse(id);
-            }
-            return (TId)Convert.ChangeType(id, typeof(TId));
+                Id = question.Id.ToString(),
+                QuizId = question.QuizId.ToString(),
+                QuestionText = question.QuestionText,
+                QuestionType = question.QuestionType,
+                Options = question.Options,
+                CorrectAnswer = question.CorrectAnswer,
+                MaxScore = question.MaxScore,
+                Order = question.Order
+            };
+            protoQuestion.QuestionAnswersIds.Add(question.QuestionAnswers.Select(e => e.Id.ToString()));
+            return protoQuestion;
+        }
+
+        private Models.Quizzes.Question ToModel(Question question)
+        {
+            Models.Quizzes.Question modelQuestion = new(question.Id, question.QuizId, question.QuestionType, question.QuestionText, question.Options, question.CorrectAnswer, question.MaxScore, question.Order);
+            return modelQuestion;
         }
     }
 }

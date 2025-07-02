@@ -1,7 +1,7 @@
-﻿using CourseService.Models.Quizes;
+﻿using CourseService.Models.Quizzes;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseService.Repositories.Quizes
+namespace CourseService.Repositories.Quizzes
 {
     public class FeedbackRepository :BaseRepository<Feedback>
     {

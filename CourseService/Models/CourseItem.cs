@@ -1,5 +1,5 @@
 ﻿
-using CourseService.Models.Quizes;
+using CourseService.Models.Quizzes;
 using CSharpFunctionalExtensions;
 
 namespace CourseService.Models

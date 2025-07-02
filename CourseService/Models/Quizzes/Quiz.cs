@@ -2,7 +2,7 @@
 
 using CSharpFunctionalExtensions;
 
-namespace CourseService.Models.Quizes
+namespace CourseService.Models.Quizzes
 {
     public class Quiz : Entity<Guid>
     {
@@ -11,6 +11,8 @@ namespace CourseService.Models.Quizes
         public string Title { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public ICollection<QuizResponse> QuizResponses { get; set; } = new List<QuizResponse>();
+        public ICollection<Question> Questions { get; set; } = new List<Question>();
 
         public Quiz(string id, string courseItemId, string title, string type, string description)
         {

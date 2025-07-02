@@ -1,5 +1,5 @@
 ﻿using CourseService.Models;
-using CourseService.Models.Quizes;
+using CourseService.Models.Quizzes;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseService.Data

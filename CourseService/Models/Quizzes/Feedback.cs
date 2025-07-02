@@ -2,12 +2,12 @@
 
 using CSharpFunctionalExtensions;
 
-namespace CourseService.Models.Quizes
+namespace CourseService.Models.Quizzes
 {
     public class Feedback : Entity<Guid>
     {
 
-
+        public QuestionAnswer QuestionAnswer { get; set; }
         public Guid QuestionAnswerId { get; set; }
         public Guid ExaminerId { get; set; }
         public string Comment { get; set; } = string.Empty;

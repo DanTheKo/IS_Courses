@@ -3,6 +3,7 @@ using System;
 using CourseService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CourseService.Migrations
 {
     [DbContext(typeof(CourseDbContext))]
-    partial class CourseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250702122447_quizzes_01")]
+    partial class quizzes_01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace CourseService.Migrations
                     b.ToTable("CourseItems");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Feedback", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Feedback", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,7 +129,7 @@ namespace CourseService.Migrations
                     b.ToTable("Feedbacks");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Question", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Question", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,7 +167,7 @@ namespace CourseService.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuestionAnswer", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuestionAnswer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -196,7 +199,7 @@ namespace CourseService.Migrations
                     b.ToTable("QuestionAnswers");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Quiz", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,7 +227,7 @@ namespace CourseService.Migrations
                     b.ToTable("Quizzes");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuizResponse", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuizResponse", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -300,10 +303,10 @@ namespace CourseService.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Feedback", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Feedback", b =>
                 {
-                    b.HasOne("CourseService.Models.Quizzes.QuestionAnswer", "QuestionAnswer")
-                        .WithMany("Feedbacks")
+                    b.HasOne("CourseService.Models.Quizes.QuestionAnswer", "QuestionAnswer")
+                        .WithMany("QuestionAnswers")
                         .HasForeignKey("QuestionAnswerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -311,9 +314,9 @@ namespace CourseService.Migrations
                     b.Navigation("QuestionAnswer");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Question", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Question", b =>
                 {
-                    b.HasOne("CourseService.Models.Quizzes.Quiz", "Quiz")
+                    b.HasOne("CourseService.Models.Quizes.Quiz", "Quiz")
                         .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -322,22 +325,22 @@ namespace CourseService.Migrations
                     b.Navigation("Quiz");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuestionAnswer", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuestionAnswer", b =>
                 {
-                    b.HasOne("CourseService.Models.Quizzes.Question", "Question")
+                    b.HasOne("CourseService.Models.Quizes.Question", "Question")
                         .WithMany("QuestionAnswers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CourseService.Models.Quizzes.QuizResponse", null)
+                    b.HasOne("CourseService.Models.Quizes.QuizResponse", null)
                         .WithMany("QuestionAnswers")
                         .HasForeignKey("QuizResponseId");
 
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Quiz", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Quiz", b =>
                 {
                     b.HasOne("CourseService.Models.CourseItem", "CourseItem")
                         .WithMany("Quizes")
@@ -348,9 +351,9 @@ namespace CourseService.Migrations
                     b.Navigation("CourseItem");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuizResponse", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuizResponse", b =>
                 {
-                    b.HasOne("CourseService.Models.Quizzes.Quiz", null)
+                    b.HasOne("CourseService.Models.Quizes.Quiz", null)
                         .WithMany("QuizResponses")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -371,24 +374,24 @@ namespace CourseService.Migrations
                     b.Navigation("Quizes");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Question", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Question", b =>
                 {
                     b.Navigation("QuestionAnswers");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuestionAnswer", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuestionAnswer", b =>
                 {
-                    b.Navigation("Feedbacks");
+                    b.Navigation("QuestionAnswers");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.Quiz", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.Quiz", b =>
                 {
                     b.Navigation("Questions");
 
                     b.Navigation("QuizResponses");
                 });
 
-            modelBuilder.Entity("CourseService.Models.Quizzes.QuizResponse", b =>
+            modelBuilder.Entity("CourseService.Models.Quizes.QuizResponse", b =>
                 {
                     b.Navigation("QuestionAnswers");
                 });
