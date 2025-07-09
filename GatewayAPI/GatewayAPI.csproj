@@ -42,7 +42,9 @@
 	
 		<ItemGroup>
 		  <Protobuf Update="Protos\accesses.proto" GrpcServices="Both" />
+		  <Protobuf Update="Protos\common.proto" GrpcServices="Both" />
 		  <Protobuf Update="Protos\courses.proto" GrpcServices="Both" />
+		  <Protobuf Update="Protos\entities.proto" GrpcServices="Both" />
 		  <Protobuf Update="Protos\quizes.proto" GrpcServices="Both" />
 		</ItemGroup>
 	

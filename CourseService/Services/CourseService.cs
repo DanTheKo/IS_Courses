@@ -252,6 +252,7 @@ namespace CourseService.Services
             response.Order = courseItem.Order;
             response.ChildrenIds.Add(courseItem.Children.Select(i => i.Id.ToString()));
             response.ContentsIds.Add(courseItem.Contents.Select(i => i.Id.ToString()));
+            response.QuizzesIds.Add(courseItem.Quizzes.Select(i => i.Id.ToString()));
             return response;
         }
         public static Grpc.CourseItem ToCourseItem(Models.CourseItem courseItem)

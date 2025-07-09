@@ -113,6 +113,20 @@ namespace GatewayAPI.Services
             var response = await _questionClient.CreateAsync(request);
             return response.Question;
         }
+        public async Task<List<Question>> CreateQuestionsAsync(List<Question> questions)
+        {
+            List<Question> responses = new();
+            for (int i = 0; i < questions.Count; i++)
+            {
+                var request = new CreateRequest
+                {
+                    Question = questions[i]
+                };
+                var response = await _questionClient.CreateAsync(request);
+                responses.Add(response.Question);
+            }
+            return responses;
+        }
 
         public async Task<Question> UpdateQuestionAsync(Question question)
         {

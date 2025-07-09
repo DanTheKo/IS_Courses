@@ -35,8 +35,9 @@ namespace GatewayAPI.Pages.Courses
         public List<CourseItem> CourseItems { get; set; } = new List<CourseItem>();
         public List<Content> Contents { get; set; } = new List<Content>();
         public CourseItem CurrentCourseItem { get; set; }
-       
-        
+        public Quiz Quiz { get; set; }
+        public List<Question> Questions { get; set; } = new();
+
         public CourseItemDto? NewCourseItem { get; set; } = new CourseItemDto();
 
         public async Task<IActionResult> OnGet(string id, string? idItem = "")
@@ -59,6 +60,16 @@ namespace GatewayAPI.Pages.Courses
                     if (!string.IsNullOrEmpty(idItem)) { CurrentCourseItem = await _courseClient.GetCourseItemAsync(idItem); }
 
                     if (CurrentCourseItem == null || CurrentCourseItem.CourseId != CurrentCourse.Id) { CurrentCourseItem = CourseItems.First(); }
+                    Console.WriteLine(CurrentCourseItem.QuizzesIds);
+                    if (CurrentCourseItem.QuizzesIds != null && CurrentCourseItem.QuizzesIds.Count> 0)
+                    {
+                        Quiz = await _quizClient.GetQuizAsync(CurrentCourseItem.QuizzesIds[0]);
+                        for (int i = 0; i < Quiz.QuestionsIds.Count; i++)
+                        {
+                            Questions.Add(await _quizClient.GetQuestionAsync(Quiz.QuestionsIds[i]));
+                        }
+                    }
+
 
                     Contents = new List<Content>();
                     for (int i = 0; i < CurrentCourseItem.ContentsIds.Count; i++)
@@ -70,7 +81,8 @@ namespace GatewayAPI.Pages.Courses
                     {
                         Contents.Add(await _courseClient.CreateContentAsync(CurrentCourseItem.Id, "Base", "Текст..."));
                     }
-                    Quiz quiz = await _quizClient.CreateQuizAsync(new Quiz()
+
+/*                    Quiz quiz = await _quizClient.CreateQuizAsync(new Quiz()
                     {
                         Id = "",
                         Title = "test",
@@ -78,7 +90,7 @@ namespace GatewayAPI.Pages.Courses
                         Description = "test",
                         CourseItemId = CurrentCourseItem.Id
                     });
-                    Console.WriteLine(quiz.Id + "*&**&*&*&");
+
                     quiz = await _quizClient.GetQuizAsync(quiz.Id);
                     quiz = await _quizClient.UpdateQuizAsync(quiz);
 
@@ -99,7 +111,9 @@ namespace GatewayAPI.Pages.Courses
                         MaxScore = 5,
                         CorrectAnswer = "Test0",
                         Options = "Test0, Test1, Test2",
-                        Order = 0
+                        Order = 0,
+                        QuestionText = "Test Text",
+                        QuestionType = "Test Type"
                     });
                     question = await _quizClient.GetQuestionAsync(question.Id);
                     question = await _quizClient.UpdateQuestionAsync(question);
@@ -109,7 +123,8 @@ namespace GatewayAPI.Pages.Courses
                         Id = "",
                         SelectedOptions = "Test0, Test1, Test2",
                         QuestionId = question.Id,
-                        QuizResponseId = quizResponse.Id
+                        QuizResponseId = quizResponse.Id,
+                        AnswerText = "Test AnswerText"
 
 
                     });
@@ -120,17 +135,17 @@ namespace GatewayAPI.Pages.Courses
                         Id = "",
                         ExaminerId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
                         Comment = "test comment",
-                        QuestionAnswerId = question.Id,
+                        QuestionAnswerId = questionAnswer.Id,
                         Rating = 5
                     });
                     feedback = await _quizClient.GetFeedbackAsync(feedback.Id);
-                    feedback = await _quizClient.UpdateFeedbackAsync(feedback);
+                    feedback = await _quizClient.UpdateFeedbackAsync(feedback);*/
 
-                    await _quizClient.DeleteFeedbackAsync(feedback.Id);
+/*                    await _quizClient.DeleteFeedbackAsync(feedback.Id);
                     await _quizClient.DeleteQuizResponseAsync(quizResponse.Id);
                     await _quizClient.DeleteQuestionAnswerAsync(questionAnswer.Id);
                     await _quizClient.DeleteQuestionAsync(question.Id);
-                    await _quizClient.DeleteQuizAsync(quiz.Id);
+                    await _quizClient.DeleteQuizAsync(quiz.Id);*/
 
                 }
 
@@ -235,6 +250,53 @@ namespace GatewayAPI.Pages.Courses
             }
 
         }
+
+        public async Task<IActionResult> OnPostCreateQuizAsync([FromBody]Quiz_QuestionsDto dto)
+        {
+
+            try
+            {
+                bool quizExists = await _quizClient.GetQuizAsync(dto.Quiz.Id) != null;
+                if (quizExists) 
+                {
+                    var quiz = await _quizClient.UpdateQuizAsync(dto.Quiz);
+                    for (int i = 0; i < dto.Questions.Count; i++)
+                    {
+                        bool questionExists = await _quizClient.GetQuestionAsync(dto.Questions[i].Id) != null;
+                        if (questionExists)
+                        {
+                            await _quizClient.UpdateQuestionAsync(dto.Questions[i]);
+                        }
+                        else
+                        {
+                            dto.Questions[i].QuizId = quiz.Id;
+                            await _quizClient.CreateQuestionAsync(dto.Questions[i]);
+                        }
+                    }
+
+                    return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+                }
+                else
+                {
+                    var quiz = await _quizClient.CreateQuizAsync(dto.Quiz);
+                    foreach (var question in dto.Questions)
+                    {
+                        question.QuizId = quiz.Id;
+                    }
+                    await _quizClient.CreateQuestionsAsync(dto.Questions);
+                    return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+                }
+
+            }
+            catch (Exception)
+            {
+
+                return new BadRequestResult();
+                throw;
+            }
+
+        }
+
 
         public async Task<IActionResult> OnPostCreateContentsAsync([FromBody]List<Content> contents)
         {

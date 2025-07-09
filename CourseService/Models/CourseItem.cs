@@ -17,7 +17,7 @@ namespace CourseService.Models
 
         public ICollection<CourseItem> Children { get; set; } = new List<CourseItem>();
         public ICollection<Content> Contents { get; set; } = new List<Content>();
-        public ICollection<Quiz> Quizes { get; set; } = new List<Quiz>();
+        public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 
 
         public CourseItem(Guid id, CourseItem? parent, string title, string type, List<CourseItem> children, List<Content> contents, int order, Course course)

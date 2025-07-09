@@ -1,0 +1,64 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "CourseService.Grpc";
+
+import "Protos/entities.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+message EntityResponse {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+}
+
+message CreateRequest {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+}
+
+message ReadRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  string id = 2;  // GUID as string
+  optional bool include_related = 3;  // Whether to include related entities
+}
+
+message UpdateRequest {
+  oneof entity {
+    Question question = 1;
+    Feedback feedback = 2;
+    QuestionAnswer question_answer = 3;
+    Quiz quiz = 4;
+    QuizResponse quiz_response = 5;
+  }
+  // Fields to update (if partial update is supported)
+  google.protobuf.StringValue update_mask = 6;
+}
+
+message DeleteRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  string id = 2;  // GUID as string
+}
+
+message ListRequest {
+  string entity_type = 1;  // "question", "feedback", etc.
+  optional string filter = 2;  // Optional filter expression
+  optional int32 page_size = 3;
+  optional string page_token = 4;
+  optional string order_by = 5;
+}
+
+message ListResponse {
+  repeated EntityResponse entities = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}

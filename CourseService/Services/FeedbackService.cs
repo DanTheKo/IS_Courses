@@ -21,6 +21,7 @@ namespace CourseService.Services
         {
             try
             {
+                request.Feedback.Id = "";
                 var entity = ToModel(request.Feedback);
                 await _repository.AddAsync(entity);
                 return new EntityResponse() { Feedback = ToProto(entity) };
@@ -39,8 +40,9 @@ namespace CourseService.Services
                 var entity = await _repository.GetByIdAsync(id);
                 return new EntityResponse() { Feedback = ToProto(entity) };
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
+                return new EntityResponse();
                 throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
         }
@@ -99,6 +101,7 @@ namespace CourseService.Services
 
         private Feedback ToProto(Models.Quizzes.Feedback feedback)
         {
+            if (feedback == null) return null;
             Feedback protoFeedback = new Feedback()
             {
                 Id = feedback.Id.ToString(),
@@ -112,6 +115,7 @@ namespace CourseService.Services
 
         private Models.Quizzes.Feedback ToModel(Feedback feedback)
         {
+            if (feedback == null) return null;
             Models.Quizzes.Feedback modelFeedback = new(feedback.Id, feedback.QuestionAnswerId, feedback.ExaminerId, feedback.Comment, feedback.Rating);
             return modelFeedback;
         }

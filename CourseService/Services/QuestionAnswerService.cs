@@ -21,6 +21,7 @@ namespace CourseService.Services
         {
             try
             {
+                request.QuestionAnswer.Id = "";
                 var entity = ToModel(request.QuestionAnswer);
                 await _repository.AddAsync(entity);
                 return new EntityResponse() { QuestionAnswer = ToProto(entity) };
@@ -36,11 +37,12 @@ namespace CourseService.Services
             try
             {
                 var id = Guid.Parse(request.Id);
-                var entity = await _repository.GetByIdAsync(id);
+                var entity = await _repository.GetWithChildrenAsync(id);
                 return new EntityResponse() { QuestionAnswer = ToProto(entity) };
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
+                return new EntityResponse();
                 throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
         }
@@ -99,6 +101,7 @@ namespace CourseService.Services
 
         private QuestionAnswer ToProto(Models.Quizzes.QuestionAnswer questionAnswer)
         {
+            if (questionAnswer == null) return null;
             QuestionAnswer protoQuestionAnswer = new QuestionAnswer()
             {
                 Id = questionAnswer.Id.ToString(),
@@ -113,6 +116,7 @@ namespace CourseService.Services
 
         private Models.Quizzes.QuestionAnswer ToModel(QuestionAnswer questionAnswer)
         {
+            if (questionAnswer == null) return null;
             Models.Quizzes.QuestionAnswer modelQuestionAnswer = new(questionAnswer.Id, questionAnswer.QuestionId, questionAnswer.QuizResponseId, questionAnswer.AnswerText, questionAnswer.SelectedOptions);
             return modelQuestionAnswer;
         }

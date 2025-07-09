@@ -10,7 +10,7 @@ namespace CourseService.Data
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseItem> CourseItems { get; set; }
         public DbSet<Content> Contents { get; set; }
-        //Interactive
+        //Quizzes
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizResponse> QuizResponses { get; set; }
         public DbSet<Question> Questions{ get; set; }

@@ -21,6 +21,7 @@ namespace CourseService.Services
         {
             try
             {
+                request.Quiz.Id = "";
                 var entity = ToModel(request.Quiz);
                 await _repository.AddAsync(entity);
                 return new EntityResponse() { Quiz = ToProto(entity) };
@@ -35,14 +36,13 @@ namespace CourseService.Services
         {
             try
             {
-                Console.WriteLine(request.Id);
                 var id = Guid.Parse(request.Id);
-                var entity = await _repository.GetByIdAsync(id);
-                Console.WriteLine(entity.Id + "*****************");
+                var entity = await _repository.GetWithChildrenAsync(id);
                 return new EntityResponse() { Quiz = ToProto(entity) };
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
+                return new EntityResponse();
                 throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
         }
@@ -74,6 +74,7 @@ namespace CourseService.Services
             }
             catch (EntityNotFoundException ex)
             {
+
                 throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
         }
@@ -101,19 +102,23 @@ namespace CourseService.Services
 
         private Quiz ToProto(Models.Quizzes.Quiz quiz)
         {
+            if (quiz == null) return null;
             Quiz protoQuiz = new Quiz
             {
                 Id = quiz.Id.ToString(),
                 CourseItemId = quiz.CourseItemId.ToString(),
                 Title = quiz.Title,
                 Description = quiz.Description,
-                Type = quiz.Type
+                Type = quiz.Type,
             };
+            protoQuiz.QuestionsIds.Add(quiz.Questions.Select(e => e.Id.ToString()));
+            protoQuiz.QuizResponsesIds.Add(quiz.QuizResponses.Select(e => e.Id.ToString()));
             return protoQuiz;
         }
 
         private Models.Quizzes.Quiz ToModel(Quiz quiz)
         {
+            if (quiz == null) return null;
             Models.Quizzes.Quiz modelQuiz = new(quiz.Id, quiz.CourseItemId, quiz.Title, quiz.Type, quiz.Description);
             return modelQuiz;
         }

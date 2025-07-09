@@ -53,7 +53,8 @@ message CourseItem {
     string type = 5;
     repeated string children_ids = 6;
     repeated string contents_ids = 7;
-    int32 order = 8;
+    repeated string quizzes_ids = 8;
+    int32 order = 9;
 
 }
 message Empty {}

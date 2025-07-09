@@ -11,9 +11,10 @@ namespace CourseService.Repositories
         public async Task<CourseItem> GetWithChildrenAsync(Guid id)
         {
             CourseItem? courseItem = await _context.Set<CourseItem>()
-                .Include(ci => ci.Children)
-                .Include(ci => ci.Contents)
-                .FirstOrDefaultAsync(ci => ci.Id == id);
+                .Include(e => e.Children)
+                .Include(e => e.Contents)
+                .Include(e => e.Quizzes)
+                .FirstOrDefaultAsync(e => e.Id == id);
             return courseItem;
         }
 

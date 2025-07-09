@@ -21,6 +21,7 @@ namespace CourseService.Services
         {
             try
             {
+                request.QuizResponse.Id = "";
                 var entity = ToModel(request.QuizResponse);
                 await _repository.AddAsync(entity);
                 return new EntityResponse() { QuizResponse = ToProto(entity) };
@@ -36,11 +37,12 @@ namespace CourseService.Services
             try
             {
                 var id = Guid.Parse(request.Id);
-                var entity = await _repository.GetByIdAsync(id);
+                var entity = await _repository.GetWithChildrenAsync(id);
                 return new EntityResponse() { QuizResponse = ToProto(entity) };
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
+                return new EntityResponse();
                 throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
             }
         }
@@ -99,16 +101,20 @@ namespace CourseService.Services
 
         private QuizResponse ToProto(Models.Quizzes.QuizResponse quizResponse)
         {
-            QuizResponse protoQuizResponse = new QuizResponse();
-            protoQuizResponse.Id = quizResponse.Id.ToString();
-            protoQuizResponse.IdentityId = quizResponse.IdentityId.ToString();
-            protoQuizResponse.QuizId = quizResponse.QuizId.ToString();
+            if (quizResponse == null) return null;
+            QuizResponse protoQuizResponse = new QuizResponse()
+            {
+                Id = quizResponse.Id.ToString(),
+                IdentityId = quizResponse.IdentityId.ToString(),
+                QuizId = quizResponse.QuizId.ToString()
+            };
             protoQuizResponse.QuestionAnswersIds.Add(quizResponse.QuestionAnswers.Select(e => e.Id.ToString()));
             return protoQuizResponse;
         }
 
         private Models.Quizzes.QuizResponse ToModel(QuizResponse quizResponse)
         {
+            if (quizResponse == null) return null;
             Models.Quizzes.QuizResponse modelQuizResponse = new(quizResponse.Id, quizResponse.QuizId, quizResponse.IdentityId);
             return modelQuizResponse;
         }
