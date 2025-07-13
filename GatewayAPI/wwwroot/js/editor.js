@@ -5,97 +5,11 @@ const editor = new EasyMDE({
         "bold", "italic", "heading", "|",
         "quote", "unordered-list", "ordered-list", "|",
         "link", "image", "|",
-        "preview", "side-by-side", "fullscreen", "|",
+        "preview",
         {
             name: "interactive-quiz",
-            action: function (editor) {
-                // Создаем модальное окно
-                const modal = document.createElement('div');
-                modal.style.cssText = `
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: white;
-          padding: 20px;
-          border: 1px solid #ddd;
-          z-index: 1000;
-          width: 500px;
-          max-width: 90%;
-          box-shadow: 0 0 20px rgba(0,0,0,0.2);
-        `;
-
-                modal.innerHTML = `
-          <h3>Создать интерактивный тест</h3>
-          <div style="margin-bottom: 15px;">
-            <label>Вопрос:</label>
-            <input type="text" id="quiz-question" style="width: 100%; padding: 8px;">
-          </div>
-          <div id="quiz-options" style="margin-bottom: 15px;">
-            <div class="option" style="display: flex; margin-bottom: 5px;">
-              <input type="radio" name="correct-option" value="0" checked>
-              <input type="text" class="option-text" style="flex-grow: 1; margin-left: 5px;" placeholder="Правильный ответ">
-            </div>
-            <div class="option" style="display: flex; margin-bottom: 5px;">
-              <input type="radio" name="correct-option" value="1">
-              <input type="text" class="option-text" style="flex-grow: 1; margin-left: 5px;" placeholder="Вариант ответа">
-            </div>
-          </div>
-          <button id="add-option-btn" style="margin-right: 10px;">+ Добавить вариант</button>
-          <button id="insert-quiz-btn" style="background: #4CAF50; color: white;">Вставить тест</button>
-          <button id="close-modal-btn" style="float: right;">Отмена</button>
-        `;
-
-                document.body.appendChild(modal);
-
-                // Обработчики событий
-                document.getElementById('add-option-btn').addEventListener('click', function () {
-                    const optionsContainer = document.getElementById('quiz-options');
-                    const optionCount = optionsContainer.children.length;
-                    const newOption = document.createElement('div');
-                    newOption.className = 'option';
-                    newOption.style.cssText = 'display: flex; margin-bottom: 5px;';
-                    newOption.innerHTML = `
-            <input type="radio" name="correct-option" value="${optionCount}">
-            <input type="text" class="option-text" style="flex-grow: 1; margin-left: 5px;" placeholder="Вариант ответа">
-          `;
-                    optionsContainer.appendChild(newOption);
-                });
-
-                document.getElementById('insert-quiz-btn').addEventListener('click', function () {
-                    const question = document.getElementById('quiz-question').value;
-                    const options = Array.from(document.querySelectorAll('.option-text')).map(el => el.value);
-                    const correctIndex = document.querySelector('input[name="correct-option"]:checked').value;
-
-                    // Генерируем уникальное имя для группы radio-кнопок
-                    const quizName = 'quiz-' + Math.random().toString(36).substr(2, 9);
-
-                    let quizHTML = `<div class="quiz">\n<h3>${question}</h3>\n<ul>\n`;
-
-                    options.forEach((option, index) => {
-                        if (option.trim()) {
-                            const correctAttr = index == correctIndex ? ' data-correct' : '';
-                            quizHTML += `<li><input type="radio" name="${quizName}"${correctAttr}> ${option}</li>\n`;
-                        }
-                    });
-
-                    quizHTML += `</ul>\n<button onclick="checkQuiz(this)">Проверить</button>\n</div>\n`;
-                    quizHTML += `<script>\nfunction checkQuiz(btn) {\n`;
-                    quizHTML += `  const selected = btn.parentNode.querySelector('input:checked');\n`;
-                    quizHTML += `  if (selected?.hasAttribute('data-correct')) {\n`;
-                    quizHTML += `    alert("Правильно!");\n  } else {\n`;
-                    quizHTML += `    alert("Неправильно!");\n  }\n}\n</script>`;
-
-                    editor.codemirror.replaceSelection(quizHTML);
-                    modal.remove();
-                });
-
-                document.getElementById('close-modal-btn').addEventListener('click', function () {
-                    modal.remove();
-                });
-            },
             className: "fa fa-question-circle",
-            title: "Добавить интерактивный тест",
+            title: "Oppa",
         }
     ],
     sanitizer: false, // Разрешаем HTML для интерактивных элементов

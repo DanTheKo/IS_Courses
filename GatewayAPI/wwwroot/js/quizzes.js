@@ -78,18 +78,17 @@ function saveQuiz() {
 
 function setQuizData(quiz, newQuestions) {
     if (quiz) {
-/*        console.log(quiz);
-        console.log(newQuestions);*/
         currentQuiz = quiz;
-/*        currentQuiz.questions = newQuestions;*/
+    }
+    else {
+        return;
     }
     if (newQuestions) {
-        
+
         questions = newQuestions;
     }
 
     updateQuizDisplay();
-    loadQuestions();
     document.getElementById('quiz-container').style.display = 'block';
 }
 
@@ -129,36 +128,20 @@ async function createQuiz() {
         window.location.href = result.redirect;*/
 }
 
-async function updateQuiz() {
-    let data = {
-        Quiz: currentQuiz,
-        Questions: questions
-    };
-    const response = await fetch(`?handler=UpdateQuiz`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-        },
-        body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-        const errors = await response.json();
-        console.error("Ошибка:", errors);
-        return;
-    }
 
-    /*    const result = await response.json();
-        window.location.href = result.redirect;*/
-}
 
 // Обновить отображение информации о тесте
 function updateQuizDisplay() {
-    if (!currentQuiz) return;
+    if (!currentQuiz) {
+        document.getElementById('quiz-container').style.display = 'none';
+
+        return;
+    }
+
 
     document.getElementById('quiz-title-display').textContent = currentQuiz.title;
-    document.getElementById('quiz-type-display').textContent = `Тип: ${getQuizTypeName(currentQuiz.type)}`;
-    document.getElementById('quiz-id-display').textContent = `ID: ${currentQuiz.id}`;
+    document.getElementById('quiz-type-display').textContent = `Вид тестирования: ${getQuizTypeName(currentQuiz.type)}`;
+/*    document.getElementById('quiz-id-display').textContent = `ID: ${currentQuiz.id}`;*/
     document.getElementById('quiz-description-display').textContent = currentQuiz.description || 'Описание отсутствует';
 
     loadQuestions();
@@ -244,7 +227,7 @@ function updateQuestionPreview() {
     const textAnswerPreview = document.getElementById('text-answer-preview');
 
     // Обновление текста вопроса
-    questionPreview.innerHTML = questionText ? `<p><strong>${questionText}</strong></p>` : '<p>Текст вопроса появится здесь...</p>';
+    questionPreview.innerHTML = questionText ? `<p>${questionText}</p>` : '<p>Текст вопроса появится здесь...</p>';
 
     // Очистка предпросмотра
     optionsPreview.innerHTML = '';
@@ -305,7 +288,7 @@ function saveQuestion() {
     }
 
     const question = {
-        id: questionId || "",
+        id: questionId || createNewId(),
         quizId: quizId,
         questionType: questionType,
         questionText: questionText,
@@ -359,7 +342,7 @@ function loadQuestions() {
 
         // Заполняем текст вопроса
         questionPreview.innerHTML = question.questionText ?
-            `<p class="card-text"><strong>${question.questionText}</strong></p>` :
+            `<p class="card-text">${question.questionText}</p>` :
             '<p class="card-text">Текст вопроса</p>';
 
         // Обрабатываем варианты ответов в зависимости от типа вопроса
@@ -405,8 +388,8 @@ function loadQuestions() {
             textAnswerDiv.innerHTML = `
                 <label for="answer-${question.id}" class="form-label">Ваш ответ:</label>
                 <textarea id="answer-${question.id}" class="form-control" rows="3"></textarea>
-                <div class="mt-2">
-                    <strong>Правильный ответ:</strong> ${question.correctAnswer}
+                <div class="mt-2 text-muted">
+                    Правильный ответ: ${question.correctAnswer}
                 </div>
             `;
             answerPreview.appendChild(textAnswerDiv);
@@ -431,11 +414,11 @@ function loadQuestions() {
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'question-actions mt-3';
         actionsDiv.innerHTML = `
-            <button onclick="showQuestionModal('${question.id}')" class="btn btn-sm btn-outline-primary me-2">
-                Редактировать
+            <button onclick="showQuestionModal('${question.id}')" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-edit"></i>
             </button>
-            <button onclick="deleteQuestion('${question.id}')" class="btn btn-sm btn-outline-danger">
-                Удалить
+            <button onclick="deleteQuestion('${question.id}')" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-trash"></i>
             </button>
         `;
 
@@ -453,7 +436,11 @@ function getQuestionTypeName(type) {
     };
     return types[type] || type;
 }
+
+let numId = 0
 function createNewId() {
+    numId = numId + 1;
+    return numId.toString();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -463,11 +450,53 @@ function createNewId() {
 // Удалить вопрос
 window.deleteQuestion = function (questionId) {
     if (confirm('Вы уверены, что хотите удалить этот вопрос?')) {
+
+        deleteQuestionFetch(questionId);
         questions = questions.filter(q => q.id !== questionId);
-/*        if (currentQuiz) {
-            currentQuiz.questions = questions;
-        }*/
         loadQuestions();
     }
 };
 
+window.deleteQuiz = function () {
+    if (confirm('Вы уверены, что хотите удалить тестирование?')) {
+
+        deleteQuizFetch(currentQuiz.id);
+        currentQuiz = null;
+        questions = [];
+        updateQuizDisplay();
+    }
+};
+
+
+
+async function deleteQuestionFetch(id) {
+    const response = await fetch(`?handler=DeleteQuestion`, {
+        method: 'POST',
+        headers: {
+            'questionId': id,
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+    });
+    if (!response.ok) {
+        const errors = await response.json();
+        console.error("Ошибка:", errors);
+        return;
+    }
+}
+
+async function deleteQuizFetch(id) {
+    const response = await fetch(`?handler=DeleteQuiz`, {
+        method: 'POST',
+        headers: {
+            'quizId': id,
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+    });
+    if (!response.ok) {
+        const errors = await response.json();
+        console.error("Ошибка:", errors);
+        return;
+    }
+}

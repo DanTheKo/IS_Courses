@@ -18,6 +18,17 @@ namespace FileService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Добавьте это в начало метода ConfigureServices
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:5256") // URL вашего фронтенда
+                                     .AllowAnyMethod()
+                                     .AllowAnyHeader()
+                                     .AllowCredentials());
+            });
+
+
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.Limits.MaxRequestBodySize = 100_000_000; // 100MB
@@ -32,11 +43,14 @@ namespace FileService
                 app.UseSwaggerUI();
             }
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.Run();
         }

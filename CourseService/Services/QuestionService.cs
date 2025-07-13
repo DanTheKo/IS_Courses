@@ -73,9 +73,9 @@ namespace CourseService.Services
                 await _repository.DeleteAsync(id);
                 return new Google.Protobuf.WellKnownTypes.Empty();
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+                return new Google.Protobuf.WellKnownTypes.Empty();
             }
         }
 

@@ -251,11 +251,12 @@ namespace GatewayAPI.Pages.Courses
 
         }
 
-        public async Task<IActionResult> OnPostCreateQuizAsync([FromBody]Quiz_QuestionsDto dto)
+        public async Task<IActionResult> OnPostCreateQuizAsync([FromBody]Quiz_QuestionsDto? dto)
         {
-
+            if (dto.Quiz == null || dto.Questions == null) return new BadRequestResult();
             try
             {
+
                 bool quizExists = await _quizClient.GetQuizAsync(dto.Quiz.Id) != null;
                 if (quizExists) 
                 {
@@ -273,8 +274,6 @@ namespace GatewayAPI.Pages.Courses
                             await _quizClient.CreateQuestionAsync(dto.Questions[i]);
                         }
                     }
-
-                    return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
                 }
                 else
                 {
@@ -284,9 +283,43 @@ namespace GatewayAPI.Pages.Courses
                         question.QuizId = quiz.Id;
                     }
                     await _quizClient.CreateQuestionsAsync(dto.Questions);
-                    return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+
                 }
 
+                return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+
+            }
+            catch (Exception)
+            {
+
+                return new BadRequestResult();
+                throw;
+            }
+
+        }
+
+        public async Task<IActionResult> OnPostDeleteQuizAsync([FromHeader] string quizId)
+        {
+            try
+            {
+                await _quizClient.DeleteQuizAsync(quizId);
+                return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
+            }
+            catch (Exception)
+            {
+
+                return new BadRequestResult();
+                throw;
+            }
+
+        }
+
+        public async Task<IActionResult> OnPostDeleteQuestionAsync([FromHeader] string questionId)
+        {
+            try
+            {
+                await _quizClient.DeleteQuestionAsync(questionId);
+                return new JsonResult(new { redirect = $"/courses/editor/{CurrentCourse.Id}" });
             }
             catch (Exception)
             {

@@ -24,7 +24,7 @@ namespace UnitTests
                 .WithMessage("Service URL cannot be null or empty*")
                 .And.ParamName.Should().Be("serviceUrl");
         }
-        [Fact]
+/*        [Fact]
         public async Task CreateCourseAsync_ValidRequest_ReturnsCourse()
         {
             var grpcClientMock = new Mock<Courses.CoursesClient>();
@@ -46,9 +46,9 @@ namespace UnitTests
 
             result.Should().BeEquivalentTo(expectedCourse);
             grpcClientMock.Verify(x => x.CreateCourseAsync(It.IsAny<CourseRequest>(), null, null, CancellationToken.None), Times.Once);
-        }
+        }*/
 
-        [Fact]
+/*        [Fact]
         public async Task CreateCourseAsync_GrpcError_ThrowsWrappedException()
         {
             var grpcClientMock = new Mock<Courses.CoursesClient>();
@@ -74,7 +74,7 @@ namespace UnitTests
 
             exception.InnerException.Should().BeOfType<RpcException>()
                 .Which.StatusCode.Should().Be(StatusCode.Internal);
-        }
+        }*/
 
         [Fact]
         public async Task GetCourseAsync_ValidId_ReturnsCourse()

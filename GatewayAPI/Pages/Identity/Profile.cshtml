@@ -1,0 +1,86 @@
+﻿@page
+@model ProfileModel
+@{
+    ViewData["Title"] = "Редактирование профиля";
+}
+
+<!-- Основной контейнер Vue приложения -->
+<div id="profile-app">
+    <div class="profile-container">
+        <h2>@ViewData["Title"]</h2>
+
+        <!-- Блок с аватаркой -->
+        <div class="profile-image-container">
+            <img :src="profile.profileImageUrl || '/images/default-avatar.png'"
+                 alt="Фото профиля"
+                 class="profile-image"
+                 @@error="handleImageError">
+            <input type="file"
+                   ref="fileInput"
+                   @@change="handleImageUpload"
+                   accept="image/*"
+                   style="display: none;">
+            <button @@click="triggerFileInput" class="btn-change-image">
+                {{ profile.profileImageUrl ? 'Изменить фото' : 'Добавить фото' }}
+            </button>
+            <button v-if="profile.profileImageUrl"
+                    @@click="removeProfileImage"
+                    class="btn-remove-image">
+                Удалить фото
+            </button>
+        </div>
+
+        <!-- Форма редактирования -->
+        <div class="form-group">
+            <label for="firstName">Имя:</label>
+            <input id="firstName" v-model="profile.firstName" class="form-control"
+                   placeholder="Введите ваше имя">
+            <span class="validation-error" v-if="errors.firstName">{{ errors.firstName }}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Фамилия:</label>
+            <input id="lastName" v-model="profile.lastName" class="form-control"
+                   placeholder="Введите вашу фамилию">
+            <span class="validation-error" v-if="errors.lastName">{{ errors.lastName }}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="middleName">Отчество:</label>
+            <input id="middleName" v-model="profile.middleName" class="form-control"
+                   placeholder="Введите ваше отчество (если есть)">
+        </div>
+
+        <div class="form-group">
+            <label for="status">Статус:</label>
+            <textarea id="status" v-model="profile.status" class="form-control" rows="3"
+                      placeholder="Расскажите о себе"></textarea>
+            <span class="hint">Максимум 200 символов</span>
+            <span class="validation-error" v-if="errors.status">{{ errors.status }}</span>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="form-actions">
+            <button @@click="saveProfile" class="btn-save" :disabled="isSaving">
+                <span v-if="isSaving"><i class="fa fa-spinner fa-spin"></i> Сохранение...</span>
+                <span v-else><i class="fa fa-save"></i> Сохранить</span>
+            </button>
+            <button @@click="resetForm" class="btn-reset" :disabled="isSaving">
+                <i class="fa fa-undo"></i> Сбросить
+            </button>
+        </div>
+
+        <!-- Уведомления -->
+        <div v-if="errorMessage" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+        </div>
+
+        <div v-if="successMessage" class="alert alert-success">
+            <i class="fa fa-check-circle"></i> {{ successMessage }}
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+   
+}

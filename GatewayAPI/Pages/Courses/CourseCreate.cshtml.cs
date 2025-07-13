@@ -31,15 +31,26 @@ namespace GatewayAPI.Pages.Courses
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string title, string description)
+        public async Task<IActionResult> OnPostCreateCourseAsync([FromBody] CourseDto courseDto)
         {
 
-            var responce = await _courseClient.CreateCourseAsync(title, description);
+            Course course = new Course()
+            {
+                Title = courseDto.Title,
+                Description = courseDto.Description,
+            };
+
+            course.Metadata = new CourseMetadata();
+            course.Metadata.Duration = courseDto.Duration;
+            course.Metadata.PreviewImageUrl = courseDto.PreviewImageUrl;
+            course.Metadata.IsDeleted = courseDto.IsDeleted;
+
+            var response = await _courseClient.CreateCourseAsync(course);
 
             string? identityId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            string? resourseId = responce.Id;
+            string? resourceId = response.Id;
 
-            await _accessClient.CreateAccessAsync(identityId, resourseId, "Owner");
+            await _accessClient.CreateAccessAsync(identityId, resourceId, "Owner");
 
             return Redirect($"/Courses");
         }

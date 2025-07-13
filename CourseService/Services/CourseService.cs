@@ -31,7 +31,7 @@ namespace CourseService.Services
             course.Description = request.Description;
             course.CourseMetadata = new Models.CourseMetadata()
             {
-                Duration = TimeSpan.Parse(request.CourseMetadata.Duration),
+                Duration = TimeSpan.Zero,
                 IsDeleted = request.CourseMetadata.IsDeleted,
                 PreviewImageUrl = request.CourseMetadata.Image
             };
@@ -54,7 +54,7 @@ namespace CourseService.Services
         public override async Task<Grpc.PaginatedResponseCourse> GetCourses(PaginationRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"Trying to get {request.PageSize} courses");
-            var courses = await _courseRepository.GetAllAsync(request.PageNumber * request.PageSize, request.PageSize);
+            var courses = await _courseRepository.GetAllWithItemsAsync(request.PageNumber * request.PageSize, request.PageSize);
             PaginatedResponseCourse responce = new PaginatedResponseCourse();
             responce.TotalCount = courses.Count();
             responce.PageNumber = responce.PageNumber;
@@ -230,6 +230,11 @@ namespace CourseService.Services
             response.Id = course.Id.ToString();
             response.Title = course.Title;
             response.Description = course.Description;
+            response.Metadata = new Grpc.CourseMetadata();
+            response.Metadata.Duration = course.CourseMetadata.Duration.ToString();
+            response.Metadata.PreviewImageUrl = course.CourseMetadata.PreviewImageUrl;
+            response.Metadata.IsDeleted = course.CourseMetadata.IsDeleted;
+
             response.CourseItemsIds.Add(course.CourseItems.Select(i => i.Id.ToString()));
             return response;
         }

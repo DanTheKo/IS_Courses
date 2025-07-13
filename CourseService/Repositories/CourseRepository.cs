@@ -14,8 +14,13 @@ namespace CourseService.Repositories
                 .ThenInclude(ci => ci.Children)
                 .Include(c => c.CourseItems)
                 .ThenInclude(ci => ci.Contents)
+                .Include(c => c.CourseMetadata)
                 .FirstOrDefaultAsync(c => c.Id == id);
             return course;
+        }
+        public async Task<IEnumerable<Course>> GetAllWithItemsAsync(int skip = 0, int take = 10)
+        {
+            return await _dbSet.Skip(skip).Take(take).Include(c => c.CourseMetadata).ToListAsync();
         }
     }
 }

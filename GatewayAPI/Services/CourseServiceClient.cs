@@ -21,19 +21,19 @@ namespace GatewayAPI.Services
         }
 
 
-        public virtual async Task<Course> CreateCourseAsync(string title, string description)
+        public virtual async Task<Course> CreateCourseAsync(Course course)
         {
             try
             {
                 var request = new CourseRequest
                 {
-                    Title = title,
-                    Description = description,
+                    Title = course.Title,
+                    Description = course.Description,
                     CourseMetadata = new CourseMetadataRequest()
                     {
-                        Duration = TimeSpan.FromHours(10d).ToString(),
-                        IsDeleted = false,
-                        Image = "img"
+                        Duration = course.Metadata.Duration,
+                        IsDeleted = course.Metadata.IsDeleted,
+                        Image = course.Metadata.PreviewImageUrl
                     }
                 };
                 return await _client.CreateCourseAsync(request);

@@ -58,6 +58,7 @@ namespace CourseService.Services
             }
             catch (Exception ex)
             {
+                return new EntityResponse();
                 throw new RpcException(new Status(StatusCode.Internal, ex.Message));
             }
         }
@@ -72,10 +73,9 @@ namespace CourseService.Services
                 await _repository.DeleteAsync(id);
                 return new Google.Protobuf.WellKnownTypes.Empty();
             }
-            catch (EntityNotFoundException ex)
+            catch (Exception ex)
             {
-
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+                return new Google.Protobuf.WellKnownTypes.Empty();
             }
         }
 

@@ -26,9 +26,9 @@
 
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
+@*                             <li class="nav-item">
                                 <a class="nav-link" href="/Courses">Мои курсы</a>
-                            </li>
+                            </li> *@
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-page="/Courses/CourseCreate">Создать курс</a>
                             </li>
@@ -54,7 +54,7 @@
                                     @User.Identity?.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/Account/Profile">Профиль</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-area="" asp-page="/Identity/Profile">Профиль</a></li>
                                     <li class ="nav-item">
                                         <a class="nav-link" asp-area="" asp-page="/Identity/Logout" asp-page-handler="Logout">Выйти</a>
                                     </li>

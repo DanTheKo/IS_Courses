@@ -10,12 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <div class="course-creation-container">
-    <div class="creation-header">
-        <h1 class="creation-title">@ViewData["Title"]</h1>
-        <p class="creation-subtitle">Заполните основные данные о новом курсе</p>
-    </div>
-
-    <form method="post" class="creation-form">
+    <form method="post" class="creation-form" id="courseForm" enctype="multipart/form-data">
         <div class="form-section">
             <div class="form-group">
                 <label class="form-label">
@@ -23,7 +18,7 @@
                     <span class="required-mark">*</span>
                 </label>
                 <input id="title" name="title" asp-for="Course.Title" class="form-input"
-                       placeholder="Введите название курса (от 5 до 100 символов)" />
+                       placeholder="Введите название курса" />
                 <span asp-validation-for="Course.Title" class="validation-message"></span>
             </div>
 
@@ -35,9 +30,35 @@
                 <textarea id="description" name="description" asp-for="Course.Description" class="form-textarea"
                           rows="5" placeholder="Опишите содержание курса, чему научатся студенты"></textarea>
                 <span asp-validation-for="Course.Description" class="validation-message"></span>
-                <div class="hint-text">Минимум 50 символов. Можно использовать Markdown.</div>
+                <div class="hint-text">Минимум 50 символов</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    Превью изображение
+                </label>
+                <div class="image-upload-container">
+                    <input type="file" id="previewImage" name="previewImage" accept="image/*" class="image-upload-input" />
+                    <label for="previewImage" class="image-upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Выберите файл или перетащите его сюда</span>
+                    </label>
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImageThumbnail" class="image-thumbnail" />
+                        <span class="image-preview-text">Превью изображения</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    Длительность курса
+                </label>
+                <input id="duration" name="duration" asp-for="Course.Duration" class="form-input"
+                       placeholder="Например: 2 недели, 1 месяц" />
             </div>
         </div>
+
 
         <div class="form-actions">
             <button type="submit" class="submit-button">
@@ -49,6 +70,143 @@
         </div>
     </form>
 </div>
+
+<style>
+    .image-upload-container {
+        margin-top: 10px;
+    }
+
+    .image-upload-input {
+        display: none;
+    }
+
+    .image-upload-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .image-upload-label:hover {
+        border-color: #666;
+    }
+
+    .image-upload-label i {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .image-preview {
+        margin-top: 15px;
+        display: none;
+        text-align: center;
+    }
+
+    .image-thumbnail {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 5px;
+    }
+
+    .image-preview-text {
+        display: block;
+        margin-top: 5px;
+        color: #666;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Обработка предпросмотра изображения
+        const imageUpload = document.getElementById('previewImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImageThumbnail = document.getElementById('previewImageThumbnail');
+
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener('load', function() {
+                    previewImageThumbnail.src = this.result;
+                    imagePreview.style.display = 'block';
+                });
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Обработка отправки формы
+        const form = document.getElementById('courseForm');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const imageFile = document.getElementById('previewImage').files[0];
+            let previewImageUrl = null;
+
+            // Сначала загружаем изображение, если оно есть
+            if (imageFile) {
+                try {
+                    const imageFormData = new FormData();
+                    imageFormData.append('file', imageFile);
+
+                    const uploadResponse = await fetch('http://localhost:5042/api/files/upload', {
+                        method: 'POST',
+                        headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: imageFormData
+
+                    });
+
+                    if (!uploadResponse.ok) {
+                        throw new Error('Ошибка при загрузке изображения');
+                    }
+
+                    const uploadedFile = await uploadResponse.json();
+                    previewImageUrl = uploadedFile.storedFileName; // или другой путь, в зависимости от ответа
+                } catch (error) {
+                    console.error('Ошибка загрузки изображения:', error);
+                    alert('Не удалось загрузить изображение. Пожалуйста, попробуйте снова.');
+                    return;
+                }
+            }
+
+            // Затем создаем курс
+            const courseData = {
+                    Title: document.getElementById('title').value,
+                    Description: document.getElementById('description').value,
+                    Duration: document.getElementById('duration').value,
+                    PreviewImageUrl: previewImageUrl,
+                    IsDeleted: false
+                };
+
+                const response = await fetch('?handler=CreateCourse', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(courseData)
+                });
+
+                window.location.href = '/Courses';
+            try {
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при создании курса. Пожалуйста, попробуйте снова.');
+            }
+        });
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

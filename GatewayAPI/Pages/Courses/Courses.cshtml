@@ -14,14 +14,14 @@
         <div class="course-card">
             <a href="/courses/preview/@course.Id" class="course-link">
                 <div class="course-image-container">
-                    <img src="/images/front-end-development.jpg" alt="@course.Title" class="course-image" />
-                    <div class="course-badge">Новый</div>
+                    <img src="http://localhost:5042/api/files/download/@course.Metadata.PreviewImageUrl" alt="@course.Title" class="course-image" />
+                    @* <div class="course-badge">Новый</div> *@
                 </div>
                 <div class="course-content">
                     <h3 class="course-title">@course.Title</h3>
                     <p class="course-description">@course.Description</p>
                     <div class="course-meta">
-                        <span class="course-duration"><i class="fas fa-clock"></i> 10 часов</span>
+                        <span class="course-duration"><i class="fas fa-clock"></i> 10 часов @* @course.Metadata.Duration *@</span>
                         <span class="course-level"><i class="fas fa-signal"></i> Начальный</span>
                     </div>
                 </div>
