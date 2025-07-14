@@ -1,40 +1,87 @@
-using IdentityService.Models;
+using GatewayAPI.Grpc;
+using GatewayAPI.Models.DTO;
+using GatewayAPI.Pages.Courses;
+using GatewayAPI.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Claims;
 
 namespace GatewayAPI.Pages.Identity
 {
+    [Authorize]
     public class ProfileModel : PageModel
     {
+        private readonly ILogger<ProfileModel> _logger;
+        public CourseServiceClient _courseClient;
+        public QuizServiceClient _quizClient;
+        public ProfileServiceClient _profileClient;
+
+        public ProfileModel(ILogger<ProfileModel> logger, ProfileServiceClient profileClient)
+        {
+            _logger = logger;
+            _profileClient = profileClient;
+        }
         [BindProperty]
         public Profile Profile { get; set; }
 
-        public void OnGet()
+        public async void OnGet()
         {
-            // Загружаем профиль из базы данных
-            // Это пример - замените на реальную логику
-            Profile = new Profile(Guid.NewGuid())
+            Profile = await _profileClient.GetProfileByIdentityIdAsync(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if(Profile == null)
             {
-                FirstName = "Иван",
-                LastName = "Иванов",
-                MiddleName = "Иванович",
-                Status = "Активный пользователь",
-                ProfileImageUrl = "/images/avatar.jpg"
-            };
+                Profile profile = new Profile();
+                profile.IdentityId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                profile.Firstname = "";
+                profile.Lastname = "";
+                profile.Middlename = "";
+                profile.Status = "";
+                profile.ProfileImageUrl = "";
+
+                Profile = await _profileClient.CreateProfileAsync(profile);
+            }
+
+            Console.WriteLine(new JsonResult(Profile).Value);
         }
 
-        public async Task<IActionResult> OnPostSaveAsync([FromBody] Profile profile)
+        public async Task<IActionResult> OnGetProfile()
+        {
+            Profile = await _profileClient.GetProfileByIdentityIdAsync(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (Profile == null)
+            {
+                Profile profile = new Profile();
+                profile.IdentityId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                profile.Firstname = "";
+                profile.Lastname = "";
+                profile.Middlename = "";
+                profile.Status = "";
+                profile.ProfileImageUrl = "";
+
+                Profile = await _profileClient.CreateProfileAsync(profile);
+            }
+
+            Console.WriteLine(new JsonResult(Profile).Value);
+            return new JsonResult(Profile);
+        }
+
+
+        public async Task<IActionResult> OnPostSaveProfileAsync([FromBody] ProfileDto dto)
         {
             try
             {
-                if (!ModelState.IsValid)
+                var profile = new Profile
                 {
-                    return BadRequest("Некорректные данные профиля");
-                }
+                    Id = dto.id,
+                    IdentityId = dto.identityId,
+                    Firstname = dto.firstname,
+                    Lastname = dto.lastname,
+                    Middlename = dto.middlename,
+                    Status = dto.status,
+                    ProfileImageUrl = dto.profileImageUrl
+                };
 
-                // Здесь сохраняем профиль в базу данных
-                // Это пример - замените на реальную логику
-                Profile = profile;
+                await _profileClient.UpdateProfileAsync(profile);
 
                 return new JsonResult(new { success = true });
             }

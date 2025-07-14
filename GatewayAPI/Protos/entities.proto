@@ -58,3 +58,13 @@ message QuizResponse {
   optional Quiz quiz = 4;
   repeated string question_answers_ids = 5;
 }
+
+message Profile {
+  string id = 1;
+  string identity_id = 2;
+  string firstname = 3;
+  string lastname = 4;
+  string middlename = 5;
+  string status = 6;
+  string profile_image_url = 7;
+}

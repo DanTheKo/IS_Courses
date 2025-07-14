@@ -1,86 +1,274 @@
 ﻿@page
 @model ProfileModel
 @{
-    ViewData["Title"] = "Редактирование профиля";
+    ViewData["Title"] = "Edit Profile";
 }
+@Html.AntiForgeryToken()
+<style>
+    .profile-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+    }
 
-<!-- Основной контейнер Vue приложения -->
-<div id="profile-app">
-    <div class="profile-container">
-        <h2>@ViewData["Title"]</h2>
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        <!-- Блок с аватаркой -->
-        <div class="profile-image-container">
-            <img :src="profile.profileImageUrl || '/images/default-avatar.png'"
-                 alt="Фото профиля"
-                 class="profile-image"
-                 @@error="handleImageError">
-            <input type="file"
-                   ref="fileInput"
-                   @@change="handleImageUpload"
-                   accept="image/*"
-                   style="display: none;">
-            <button @@click="triggerFileInput" class="btn-change-image">
-                {{ profile.profileImageUrl ? 'Изменить фото' : 'Добавить фото' }}
-            </button>
-            <button v-if="profile.profileImageUrl"
-                    @@click="removeProfileImage"
-                    class="btn-remove-image">
-                Удалить фото
-            </button>
-        </div>
+    .profile-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
 
-        <!-- Форма редактирования -->
-        <div class="form-group">
-            <label for="firstName">Имя:</label>
-            <input id="firstName" v-model="profile.firstName" class="form-control"
-                   placeholder="Введите ваше имя">
-            <span class="validation-error" v-if="errors.firstName">{{ errors.firstName }}</span>
-        </div>
+    .profile-subtitle {
+        color: var(--text-light);
+        font-size: 16px;
+    }
 
-        <div class="form-group">
-            <label for="lastName">Фамилия:</label>
-            <input id="lastName" v-model="profile.lastName" class="form-control"
-                   placeholder="Введите вашу фамилию">
-            <span class="validation-error" v-if="errors.lastName">{{ errors.lastName }}</span>
-        </div>
+    .profile-form .form-group {
+        margin-bottom: 20px;
+    }
 
-        <div class="form-group">
-            <label for="middleName">Отчество:</label>
-            <input id="middleName" v-model="profile.middleName" class="form-control"
-                   placeholder="Введите ваше отчество (если есть)">
-        </div>
+    .profile-form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text-light);
+        font-size: 14px;
+    }
 
-        <div class="form-group">
-            <label for="status">Статус:</label>
-            <textarea id="status" v-model="profile.status" class="form-control" rows="3"
-                      placeholder="Расскажите о себе"></textarea>
-            <span class="hint">Максимум 200 символов</span>
-            <span class="validation-error" v-if="errors.status">{{ errors.status }}</span>
-        </div>
+    .profile-form input[type="text"],
+    .profile-form textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
 
-        <!-- Кнопки действий -->
-        <div class="form-actions">
-            <button @@click="saveProfile" class="btn-save" :disabled="isSaving">
-                <span v-if="isSaving"><i class="fa fa-spinner fa-spin"></i> Сохранение...</span>
-                <span v-else><i class="fa fa-save"></i> Сохранить</span>
-            </button>
-            <button @@click="resetForm" class="btn-reset" :disabled="isSaving">
-                <i class="fa fa-undo"></i> Сбросить
-            </button>
-        </div>
+        .profile-form input[type="text"]:focus,
+        .profile-form textarea:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
 
-        <!-- Уведомления -->
-        <div v-if="errorMessage" class="alert alert-danger">
-            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
-        </div>
+    .avatar-section {
+        text-align: center;
+        margin: 20px 0;
+    }
 
-        <div v-if="successMessage" class="alert alert-success">
-            <i class="fa fa-check-circle"></i> {{ successMessage }}
-        </div>
+    .avatar-preview {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-light);
+        margin: 0 auto 15px;
+        display: block;
+    }
+
+    .avatar-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Мой профиль</h1>
+        <p class="profile-subtitle">Расскажите о себе</p>
     </div>
-</div>
 
-@section Scripts {
-   
-}
+    <form id="profileForm" class="profile-form">
+        <input type="hidden" id="identityId" name="identityId">
+
+        <div class="avatar-section">
+            <img id="previewImageThumbnail" src="" alt="Ваше фото" class="avatar-preview">
+            <div class="avatar-upload">
+                <input type="file" id="profileImage" name="profileImage" accept="image/*" style="display: none;">
+                <button type="button" class="avatar-upload-btn" onclick="document.getElementById('profileImage').click()">
+                    Изменить фото
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="firstname">Имя</label>
+            <input type="text" id="firstname" name="firstname" placeholder="Ваше имя" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastname">Фамилия</label>
+            <input type="text" id="lastname" name="lastname" placeholder="Ваша фамилия" required>
+        </div>
+
+        <div class="form-group">
+            <label for="middlename">Отчество (необязательно)</label>
+            <input type="text" id="middlename" name="middlename" placeholder="Ваше отчество">
+        </div>
+
+        <div class="form-group">
+            <label for="status">Статус</label>
+            <input type="text" id="status" name="status" placeholder="Чем вы занимаетесь?">
+        </div>
+
+        <button type="submit" class="btn btn-outline-success">Сохранить изменения</button>
+    </form>
+</div>
+<script>
+
+        function capitalizeObjectKeys(obj) {
+        if (!obj) return obj;
+        return Object.keys(obj).reduce((newObj, key) => {
+            newObj[key.charAt(0).toUpperCase() + key.slice(1)] = obj[key];
+            return newObj;
+        }, {});
+    }
+
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Загрузка данных профиля при открытии страницы
+        const profileLoad = await loadProfileData();
+        console.log(profileLoad);
+
+        // Обработка предпросмотра изображения
+        const imageUpload = document.getElementById('profileImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImageThumbnail = document.getElementById('previewImageThumbnail');
+
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener('load', function() {
+                    previewImageThumbnail.src = this.result;
+                    imagePreview.style.display = 'block';
+                });
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Обработка отправки формы
+        const form = document.getElementById('profileForm');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Собираем данные формы
+            const profileData = {
+                id: profileLoad.id,
+                identityId: profileLoad.identityId,
+                firstname: document.getElementById('firstname').value,
+                lastname: document.getElementById('lastname').value,
+                middlename: document.getElementById('middlename').value,
+                status: document.getElementById('status').value,
+                profileImageUrl: document.getElementById('previewImageThumbnail').src || ''
+            };
+
+
+
+            const imageFile = document.getElementById('profileImage').files[0];
+
+            // Если есть новое изображение, сначала загружаем его
+            if (imageFile) {
+                try {
+                    const imageFormData = new FormData();
+                    imageFormData.append('file', imageFile);
+
+                    const uploadResponse = await fetch('http://localhost:5042/api/files/upload', {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: imageFormData
+                    });
+
+                    if (!uploadResponse.ok) {
+                        throw new Error('Ошибка при загрузке изображения');
+                    }
+
+                    const uploadedFile = await uploadResponse.json();
+                    profileData.profileImageUrl = uploadedFile.storedFileName;
+                } catch (error) {
+                    console.error('Ошибка загрузки изображения:', error);
+                    alert('Не удалось загрузить изображение. Пожалуйста, попробуйте снова.');
+                    return;
+                }
+            }
+
+            // Отправка данных профиля
+            try {
+
+
+                console.log(profileData);
+                const response = await fetch('?handler=SaveProfile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка при сохранении профиля');
+                }
+
+                const result = await response.json();
+                alert('Профиль успешно обновлен!');
+                // Обновляем данные на странице
+                loadProfileData();
+            } catch (error) {
+                console.error('Ошибка сохранения профиля:', error);
+                alert('Не удалось сохранить профиль. Пожалуйста, попробуйте снова.');
+            }
+        });
+    });
+
+    // Функция загрузки данных профиля
+    async function loadProfileData() {
+        try {
+            const response = await fetch('?handler=Profile');
+
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке профиля');
+            }
+
+            const profile = await response.json();
+
+            console.log(profile);
+
+            // Заполняем форму данными
+            document.getElementById('identityId').value = profile.identityId;
+            document.getElementById('firstname').value = profile.firstname;
+            document.getElementById('lastname').value = profile.lastname;
+            document.getElementById('middlename').value = profile.middlename || '';
+            document.getElementById('status').value = profile.status || '';
+
+            // Если есть изображение профиля, показываем его
+            if (profile.profileImageUrl) {
+                const previewImageThumbnail = document.getElementById('previewImageThumbnail');
+                const imagePreview = document.getElementById('imagePreview');
+
+                previewImageThumbnail.src = "http://localhost:5042/api/files/download/" + profile.profileImageUrl;
+            }
+            return profile;
+
+        } catch (error) {
+            console.error('Ошибка загрузки профиля:', error);
+            alert('Не удалось загрузить данные профиля.');
+        }
+    }
+</script>

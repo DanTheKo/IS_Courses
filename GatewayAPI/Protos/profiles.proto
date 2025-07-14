@@ -1,7 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "IdentityService";
-
+option csharp_namespace = "GatewayAPI.Grpc";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";

@@ -107,7 +107,7 @@ namespace GatewayAPI.Pages.Courses
         }
         public QuizResultDto GetQuizResult(List<Question> questions, List<QuestionAnswer> questionAnswers)
         {
-            questions.OrderBy(q => q.Order);
+            //questions.OrderBy(q => q.Order);
             var quizResultDto = new QuizResultDto
             {
                 Questions = questions,
@@ -162,6 +162,7 @@ namespace GatewayAPI.Pages.Courses
                     Score = userScore,
                     MaxScore = question.MaxScore
                 });
+
             }
             return quizResultDto;
         }

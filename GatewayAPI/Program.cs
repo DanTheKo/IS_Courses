@@ -65,6 +65,11 @@ namespace GatewayAPI
                     var serviceUrl = "http://localhost:5125";
                     return new IdentityServiceClient(serviceUrl);
                 });
+                builder.Services.AddSingleton(provider =>
+                {
+                    var serviceUrl = "http://localhost:5125";
+                    return new ProfileServiceClient(serviceUrl);
+                });
                 builder.Services.AddSingleton<CourseServiceClient>(provider =>
                 {
                     var serviceUrl = "http://localhost:5057";

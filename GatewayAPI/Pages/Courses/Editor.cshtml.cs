@@ -23,12 +23,14 @@ namespace GatewayAPI.Pages.Courses
         private readonly ILogger<EditorModel> _logger;
         public CourseServiceClient _courseClient;
         public QuizServiceClient _quizClient;
+        public ProfileServiceClient _profileClient;
 
-        public EditorModel(ILogger<EditorModel> logger, CourseServiceClient courseClient, QuizServiceClient quizClient)
+        public EditorModel(ILogger<EditorModel> logger, CourseServiceClient courseClient, QuizServiceClient quizClient, ProfileServiceClient profileClient)
         {
             _logger = logger;
             _courseClient = courseClient;
             _quizClient = quizClient;
+            _profileClient = profileClient;
         }
 
         public Course CurrentCourse { get; set; }
@@ -81,72 +83,7 @@ namespace GatewayAPI.Pages.Courses
                     {
                         Contents.Add(await _courseClient.CreateContentAsync(CurrentCourseItem.Id, "Base", "Текст..."));
                     }
-
-/*                    Quiz quiz = await _quizClient.CreateQuizAsync(new Quiz()
-                    {
-                        Id = "",
-                        Title = "test",
-                        Type = "test",
-                        Description = "test",
-                        CourseItemId = CurrentCourseItem.Id
-                    });
-
-                    quiz = await _quizClient.GetQuizAsync(quiz.Id);
-                    quiz = await _quizClient.UpdateQuizAsync(quiz);
-
-                    QuizResponse quizResponse = await _quizClient.CreateQuizResponseAsync(new QuizResponse()
-                    {
-                        Id = "",
-                        QuizId = quiz.Id,
-                        IdentityId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                    });
-
-                    var test = await _quizClient.GetQuizResponseAsync(quizResponse.Id);
-                    quizResponse = await _quizClient.UpdateQuizResponseAsync(quizResponse);
-
-                    Question question = await _quizClient.CreateQuestionAsync(new Question()
-                    {
-                        Id = "",
-                        QuizId = quiz.Id,
-                        MaxScore = 5,
-                        CorrectAnswer = "Test0",
-                        Options = "Test0, Test1, Test2",
-                        Order = 0,
-                        QuestionText = "Test Text",
-                        QuestionType = "Test Type"
-                    });
-                    question = await _quizClient.GetQuestionAsync(question.Id);
-                    question = await _quizClient.UpdateQuestionAsync(question);
-
-                    QuestionAnswer questionAnswer = await _quizClient.CreateQuestionAnswerAsync(new QuestionAnswer()
-                    {
-                        Id = "",
-                        SelectedOptions = "Test0, Test1, Test2",
-                        QuestionId = question.Id,
-                        QuizResponseId = quizResponse.Id,
-                        AnswerText = "Test AnswerText"
-
-
-                    });
-                    questionAnswer = await _quizClient.GetQuestionAnswerAsync(questionAnswer.Id);
-                    questionAnswer = await _quizClient.UpdateQuestionAnswerAsync(questionAnswer);
-                    Feedback feedback = await _quizClient.CreateFeedbackAsync(new Feedback()
-                    {
-                        Id = "",
-                        ExaminerId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                        Comment = "test comment",
-                        QuestionAnswerId = questionAnswer.Id,
-                        Rating = 5
-                    });
-                    feedback = await _quizClient.GetFeedbackAsync(feedback.Id);
-                    feedback = await _quizClient.UpdateFeedbackAsync(feedback);*/
-
-/*                    await _quizClient.DeleteFeedbackAsync(feedback.Id);
-                    await _quizClient.DeleteQuizResponseAsync(quizResponse.Id);
-                    await _quizClient.DeleteQuestionAnswerAsync(questionAnswer.Id);
-                    await _quizClient.DeleteQuestionAsync(question.Id);
-                    await _quizClient.DeleteQuizAsync(quiz.Id);*/
-
+                    var f = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 }
 
             }

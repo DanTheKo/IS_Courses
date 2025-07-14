@@ -7,11 +7,11 @@ namespace IdentityService.Data
     public class IdentityDbContext : DbContext
     {
         public DbSet<Identity> Users { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options) { }
         public IdentityDbContext() { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfigurationsFromAssembly(typeof(AuthorizationDbContext).Assembly);
             modelBuilder.Entity<Identity>().HasIndex(u => u.Login).IsUnique();
             modelBuilder.Entity<Identity>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Identity>().HasIndex(u => u.Phone).IsUnique();

@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "IdentityService";
+option csharp_namespace = "IdentityService.Grpc";
 
 message Feedback {
   string id = 1;
@@ -24,6 +24,7 @@ message Question {
   int32 order = 8;
   // Optional related entities
   optional Quiz quiz = 9;
+  repeated string question_answers_ids = 10;
 }
 
 message QuestionAnswer {
@@ -56,4 +57,14 @@ message QuizResponse {
   // Optional related entities
   optional Quiz quiz = 4;
   repeated string question_answers_ids = 5;
+}
+
+message Profile {
+  string id = 1;
+  string identity_id = 2;
+  string firstname = 3;
+  string lastname = 4;
+  string middlename = 5;
+  string status = 6;
+  string profile_image_url = 7;
 }

@@ -13,6 +13,7 @@ message EntityResponse {
     QuestionAnswer question_answer = 3;
     Quiz quiz = 4;
     QuizResponse quiz_response = 5;
+    Profile profile = 6;
   }
 }
 
@@ -23,6 +24,7 @@ message CreateRequest {
     QuestionAnswer question_answer = 3;
     Quiz quiz = 4;
     QuizResponse quiz_response = 5;
+    Profile profile = 6;
   }
 }
 
@@ -39,9 +41,10 @@ message UpdateRequest {
     QuestionAnswer question_answer = 3;
     Quiz quiz = 4;
     QuizResponse quiz_response = 5;
+    Profile profile = 6;
   }
   // Fields to update (if partial update is supported)
-  google.protobuf.StringValue update_mask = 6;
+  google.protobuf.StringValue update_mask = 7;
 }
 
 message DeleteRequest {

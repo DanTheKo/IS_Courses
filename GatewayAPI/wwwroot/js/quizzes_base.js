@@ -301,6 +301,29 @@ function createViewerQuestionElement(question) {
     return questionEl;
 }
 
+function renderPreviewAnswerSection(question, result, isViewMode = false) {
+    if (isViewMode) {
+        console.log(question.correctAnswer + '   '  + result.userAnswer)
+        // Версия для просмотра с интерактивными элементами
+        if (question.questionType === 'SingleChoice' || question.questionType === 'MultipleChoice') {
+            return `
+        <div class="options-list">
+          ${question.options.split('\n').map((opt, i) => `
+            <div class="form-check">
+              <input class="form-check-input" ${result.userAnswer.includes(opt) && opt.includes(result.userAnswer) ? 'checked' : ''} disabled type="${question.questionType === 'SingleChoice' ? 'radio' : 'checkbox'}" 
+                     name="question-${question.id}" id="option-${question.id}-${i}">
+              <label class="label" for="option-${question.id}-${i}">${opt}</label>
+            </div>
+          `).join('')}
+        </div>
+      `;
+        }
+        else {
+            return ``
+        }
+    }
+}
+
 function renderAnswerSection(question, isViewMode = false) {
     if (isViewMode) {
         // Версия для просмотра с интерактивными элементами
@@ -707,6 +730,7 @@ function showResults(result) {
                         <span class="question-score">${item.score}/${item.maxScore} баллов</span>
                     </div>
                     <p class="question-text">${item.questionText}</p>
+                    ${renderPreviewAnswerSection(result.questions[index], item, true)}
                     <div class="answer-comparison">
                         <div class="user-answer">
                             <span class="answer-label">Ваш ответ:</span>
